@@ -52,7 +52,14 @@ const httpsOptions = {
   cert: fs.readFileSync('./security/cert.pem')
 }
 
-https.createServer(httpsOptions, app)
-  .listen(port, () => {
-    console.log('secured server running at ' + port)
-  })
+if (process.env.NODE_ENV === "production") {
+  http.createServer(app)
+    .listen(port, () => {
+      console.log('production server running at ' + port)
+    })
+} else {
+  https.createServer(httpsOptions, app)
+    .listen(port, () => {
+      console.log('secured server running at ' + port)
+    })
+}
