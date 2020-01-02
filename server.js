@@ -54,6 +54,11 @@ const httpsOptions = {
 }
 
 if (process.env.NODE_ENV === "production") {
+  app.use(express.static("client/build"));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+  });
   http.createServer(app)
     .listen(port, () => {
       console.log('production server running at ' + port)
