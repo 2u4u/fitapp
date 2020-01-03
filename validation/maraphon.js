@@ -14,31 +14,34 @@ module.exports = function validateAddMaraphon(data) {
 
 
   if (Validator.isEmpty(data.name)) {
-    errors.name = "Не заполнено название марафона";
+    errors.maraphonName = "Не заполнено название марафона";
   }
 
   if (Validator.isEmpty(data.description)) {
-    errors.description = "Не заполнено описание марафона";
+    errors.maraphonDescription = "Не заполнено описание марафона";
   }
 
   if (Validator.isEmpty(data.duration)) {
-    errors.duration = "Не заполнена длительность марафона";
+    errors.maraphonDuration = "Не заполнена длительность марафона";
   }
 
   if (Validator.isEmpty(data.category)) {
-    errors.category = "Не заполнена категория марафона";
+    errors.maraphonCategory = "Не заполнена категория марафона";
   }
 
   // if (Validator.isEmpty(data.goals)) {
-  //   errors.goals = "Не заполнены цели марафона";
+  //   errors.maraphonGoal = "Не заполнены цели марафона";
   // }
 
   if (Validator.isEmpty(data.start_date)) {
-    errors.start_date = "Не дата начала марафона";
+    errors.maraphonStartDate = "Не дата начала марафона";
   }
 
+  console.log("data.free", data.free)
   if (Validator.isEmpty(data.price)) {
-    errors.price = "Не заполнена стоимость марафона";
+    if (!data.free) {
+      errors.maraphonPrice = "Не заполнена стоимость марафона";
+    }
   }
 
   return {

@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import draftToHtml from 'draftjs-to-html';
 import { showUserMaraphons } from "../../actions/maraphonAction";
 
 import Admin from "../admin/Admin"
-import { Row, Col, Icon, PageHeader, Card } from 'antd';
+import AddMaraphonForm from "./AddMaraphonForm"
+import { Drawer, Row, Col, Icon, PageHeader, Card } from 'antd';
 
 const routes = [
   {
@@ -19,9 +20,21 @@ function List(props) {
   const userId = useSelector(state => state.auth.user.id);
   const maraphons = useSelector(state => state.maraphon.maraphons);
 
+  const [state, setState] = useState({
+    visible: false,
+  });
+
   useEffect(() => {
     dispatch(showUserMaraphons(userId));
   }, [userId, dispatch]);
+
+  const showAddMaraphon = () => {
+    setState({ visible: true })
+  }
+
+  const onCloseAddMaraphon = () => {
+    setState({ visible: false })
+  }
 
   return (
     <Admin history={props.history}>
@@ -35,6 +48,29 @@ function List(props) {
       // subTitle="Не забудьте сохранить тренировку"
       />
       <Row gutter={[16, 16]} type="flex">
+        <Col span={6}>
+          <Card
+            style={{
+              height: "260px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column"
+            }}
+            hoverable={true}
+            onClick={showAddMaraphon}
+          >
+            <div style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column"
+            }}>
+              <Icon type="plus-circle" style={{ fontSize: '50px', marginBottom: "20px" }} />
+              <span>Добавить марафон</span>
+            </div>
+          </Card>
+        </Col>
         {maraphons ?
           maraphons.map(maraphon => (
             <Col span={6} key={maraphon._id}>
@@ -43,9 +79,9 @@ function List(props) {
                 style={{ height: "260px" }}
                 hoverable={true}
                 actions={[
-                  <Link to="/admin/maraphon/news"><Icon type="warning" theme="twoTone" twoToneColor="#eb2f96" key="users" /></Link>,
+                  // <Link to="/admin/maraphon/news"><Icon type="warning" theme="twoTone" twoToneColor="#eb2f96" key="users" /></Link>,
                   <Link to={`/admin/maraphon/${maraphon.handle}`}><Icon type="eye" key="view" /></Link>,
-                  <Link to="/admin/trainings/add"><Icon type="edit" key="edit" /></Link>,
+                  // <Link to="/admin/trainings/add"><Icon type="edit" key="edit" /></Link>,
                 ]}
               >
                 <div style={{ height: "105px", overflow: "hidden" }}
@@ -55,31 +91,17 @@ function List(props) {
             </Col>
           )) : ""
         }
-        <Col span={6}>
-          <Link to="/admin/maraphons/add">
-            <Card
-              style={{
-                height: "260px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column"
-              }}
-              hoverable={true}
-            >
-              <div style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column"
-              }}>
-                <Icon type="plus-circle" style={{ fontSize: '50px', marginBottom: "20px" }} />
-                <span>Добавить марафон</span>
-              </div>
-            </Card>
-          </Link>
-        </Col>
       </Row>
+      <Drawer
+        title="Добавление марафона"
+        placement="right"
+        closable={false}
+        width={520}
+        onClose={onCloseAddMaraphon}
+        visible={state.visible}
+      >
+        <AddMaraphonForm />
+      </Drawer>
     </Admin>
   );
 }

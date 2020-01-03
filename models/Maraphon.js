@@ -42,8 +42,11 @@ const MaraphonSchema = new Schema({
     required: true
   },
   price: {
-    type: String,
-    required: true
+    type: String
+  },
+  free: {
+    type: Boolean,
+    required: true,
   },
   date: {
     type: Date,

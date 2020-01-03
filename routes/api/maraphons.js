@@ -20,7 +20,7 @@ router.post("/add",
 
     if (!isValid) return res.status(400).json(errors);
 
-    const { name, id, user, description, duration, category, tags, goals, start_date, price } = req.body;
+    const { name, id, user, description, duration, category, tags, goals, start_date, start_time, price, free } = req.body;
     let handle = transliterate(name);
     //check if handle is less then 30 symbols, then just add hash, if more - trim it to 30 and add hash
     //hash is based on handle
@@ -47,6 +47,8 @@ router.post("/add",
             maraphon.start_date = start_date;
             maraphon.price = price;
             maraphon.handle = newHandle;
+            maraphon.start_time = start_time;
+            maraphon.free = free;
 
             maraphon
               .save()
@@ -59,7 +61,7 @@ router.post("/add",
           }
         } else {
           //if user doesn't have maraphone with such name
-          const newMaraphon = new Maraphon({ name, user, description, duration, category, tags, goals, start_date, price, handle });
+          const newMaraphon = new Maraphon({ name, user, description, duration, category, tags, goals, start_date, start_time, price, free, handle });
 
           newMaraphon
             .save()
@@ -93,7 +95,6 @@ router.get("/all", (req, res) => {
 // @desk    Return maraphon details for :handle
 // @access  Public
 router.get("/detailed/:handle", (req, res) => {
-  console.log("req.params.handle", req.params.handle)
   Maraphon
     .findOne({ handle: req.params.handle })
     .then(maraphon => res.json(maraphon))

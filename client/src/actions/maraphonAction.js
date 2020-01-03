@@ -10,7 +10,7 @@ export const addMaraphon = (maraphonData) => dispatch => {
     .post("/api/maraphons/add", maraphonData)
     .then(res => {
       dispatch({ type: LOADING, payload: false })
-      dispatch({ type: NOTIFICATION, payload: { active: true, type: "success", text: "You have successfully added you post" } })
+      dispatch({ type: NOTIFICATION, payload: { active: true, type: "success", text: "Марафон успешно добавлен" } })
       // dispatch({ type: LOAD_POST_TO_EDIT, payload: {} })
       setTimeout(() =>
         dispatch({ type: NOTIFICATION, payload: { active: false, type: "", text: "" } })
@@ -18,6 +18,7 @@ export const addMaraphon = (maraphonData) => dispatch => {
 
     })
     .catch(err => {
+      dispatch({ type: LOADING, payload: false })
       dispatch({
         type: GET_ERRORS,
         payload: err.response.data

@@ -14,7 +14,7 @@ import Account from "../components/admin/Account"
 import MaraphonsAdd from "../components/maraphons/Add";
 import MaraphonsList from "../components/maraphons/List";
 import MaraphonNews from "../components/maraphons/News";
-import TrainingsAdd from "../components/trainings/Add";
+import TrainingsAdd from "../components/trainings/AddTrainingForm";
 import TrainingsList from "../components/trainings/List";
 import MaraphonView from "../components/maraphons/View"
 
