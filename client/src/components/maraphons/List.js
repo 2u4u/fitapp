@@ -39,13 +39,8 @@ function List(props) {
   return (
     <Admin history={props.history}>
       <PageHeader
-        // style={{
-        //   border: '1px solid rgb(235, 237, 240)',
-        // }}
-        // onBack={() => null}
         breadcrumb={{ routes }}
         title="Список ваших марафонов"
-      // subTitle="Не забудьте сохранить тренировку"
       />
       <Row gutter={[16, 16]} type="flex">
         <Col span={6}>
@@ -77,7 +72,7 @@ function List(props) {
               <Card
                 title={maraphon.name}
                 style={{ height: "260px" }}
-                hoverable={true}
+                hoverable={false}
                 actions={[
                   // <Link to="/admin/maraphon/news"><Icon type="warning" theme="twoTone" twoToneColor="#eb2f96" key="users" /></Link>,
                   <Link to={`/admin/maraphon/${maraphon.handle}`}><Icon type="eye" key="view" /></Link>,
@@ -95,7 +90,7 @@ function List(props) {
       <Drawer
         title="Добавление марафона"
         placement="right"
-        closable={false}
+        closable={true}
         width={520}
         onClose={onCloseAddMaraphon}
         visible={state.visible}

@@ -21,8 +21,6 @@ function AddMaraphonForm(props) {
   const loading = useSelector(state => state.maraphon.loading);
   const notification = useSelector(state => state.maraphon.notification);
 
-  console.log("error", error)
-
   const [state, setState] = useState({
     maraphonId: "",
     maraphonName: "",
@@ -47,9 +45,7 @@ function AddMaraphonForm(props) {
   }
 
   const handleEditorChange = (editorState) => {
-    setEditorState(
-      editorState,
-    );
+    setEditorState(editorState);
   }
 
   const handleInputChange = (e) => {

@@ -17,6 +17,8 @@ import MaraphonNews from "../components/maraphons/News";
 import TrainingsAdd from "../components/trainings/AddTrainingForm";
 import TrainingsList from "../components/trainings/List";
 import MaraphonView from "../components/maraphons/View"
+import TrainingView from "../components/trainings/View"
+import Page404 from "../components/page/Page404"
 
 import { PrivateRoute } from "../components/routing/PrivateRoute";
 
@@ -54,8 +56,10 @@ function App() {
         <PrivateRoute path={"/admin/maraphons/add"} component={MaraphonsAdd} />
         <PrivateRoute path={"/admin/maraphon/:handle"} component={MaraphonView} />
         <PrivateRoute path={"/admin/maraphon/news"} component={MaraphonNews} />
+        <PrivateRoute path={"/admin/training/:handle"} component={TrainingView} />
         <PrivateRoute path={"/admin/trainings/list"} component={TrainingsList} />
         <PrivateRoute path={"/admin/trainings/add"} component={TrainingsAdd} />
+        <Route exact path="*" component={Page404} />
       </Switch>
     </Router>
   )

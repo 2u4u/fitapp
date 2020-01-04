@@ -56,6 +56,12 @@ div.DraftEditor-editorContainer,
 div.public-DraftEditor-content {
   height: 100%;
 }
+.ant-form-item-control.has-error {
+  .DraftEditor-root {
+    background-color: #fff;
+    border-color: #f5222d;
+  }
+}
 // .anticon-change {
 //   font-size: 18px;
 //   padding: 5px;

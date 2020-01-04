@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { loginUser } from "../../actions/authAction";
-import { Layout, Form, Icon, Input, Button, Checkbox, Typography } from 'antd';
+import { Layout, Form, Icon, Input, Button, Checkbox, Typography, Row, Col } from 'antd';
 
 const { Title } = Typography;
 const { Content, Sider } = Layout;
@@ -39,7 +39,7 @@ function Login(props) {
 
   return (
     <Layout style={{ height: '100%' }}>
-      <Content>Content</Content>
+      <Content><Row><Col>Добро пожаловать</Col></Row></Content>
       <Sider
         theme="light"
         width="400"

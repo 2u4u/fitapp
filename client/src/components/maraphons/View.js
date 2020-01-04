@@ -5,10 +5,11 @@ import draftToHtml from 'draftjs-to-html';
 // import { stateToHTML } from 'draft-js-export-html';
 
 import { showDetailedMaraphon } from "../../actions/maraphonAction";
-import { Layout, PageHeader, Row, Col, Button, Tabs, Descriptions, Badge } from 'antd';
+import { Alert, Layout, PageHeader, Row, Col, Button, Tabs, Descriptions, Badge } from 'antd';
 
 import Admin from '../admin/Admin';
 import List from '../trainings/List';
+// import Page404 from '../page/Page404';
 const { Content } = Layout;
 const { TabPane } = Tabs;
 
@@ -26,13 +27,34 @@ function View(props) {
     dispatch(showDetailedMaraphon(handle));
   }, [handle, dispatch]);
 
-  return (
+  let badgeStatus = "default";
+  let badgeText = "Черновик";
+  let alertMessage = <Alert message='Марафон еще не активен. Для активации марафона нажмите кнопку "Активировать марафон". Марафон запустится в Дату старта' type="warning" />
+
+  console.log("maraphon.status", maraphon.status)
+  switch (maraphon.status) {
+    case 'Success':
+      badgeText = "Активный"
+      alertMessage = <Alert message='Марафон активирован. Марафон запустится в Дату старта' type="success" />
+      break
+    case 'Processing':
+      badgeText = "Идет"
+      alertMessage = ""
+      break
+    default:
+      badgeText = "Черновик"
+      alertMessage = <Alert message='Марафон еще не активен. Для активации марафона нажмите кнопку "Активировать марафон". Марафон запустится в Дату старта' type="warning" />
+  }
+
+
+  let content =
+    // maraphon ?
     <Admin history={props.history}>
       <PageHeader
         breadcrumb={{ routes }}
         title="Информация по марафону"
       />
-      <Tabs defaultActiveKey="3">
+      <Tabs defaultActiveKey="1">
         <TabPane tab="Описание марафона" key="1">
           <Content style={{ background: '#fff', padding: 24 }}>
             {maraphon.description ?
@@ -48,15 +70,18 @@ function View(props) {
                 <Descriptions.Item label="Цели">{maraphon.goals}</Descriptions.Item>
                 <Descriptions.Item label="Цена">{maraphon.price} руб.</Descriptions.Item>
                 <Descriptions.Item label="Статус">
-                  <Badge status="processing" text="Запущен" />
+                  <Badge status={badgeStatus} text={badgeText} />
                 </Descriptions.Item>
               </Descriptions>)
               : <span>Информация еще не заполнена</span>}
+            <div style={{ marginTop: "20px" }}>
+              {alertMessage}
+            </div>
             <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
               <Col span={12}><Button style={{ width: "100%" }}>Редактировать описание марафона</Button></Col>
-              <Col span={12}><Button style={{ width: "100%" }} type="dashed">Перевести марафон в черновики</Button></Col>
+              {/* <Col span={12}><Button style={{ width: "100%" }} type="dashed">Перевести марафон в черновики</Button></Col> */}
               <Col span={12}><Button style={{ width: "100%" }} type="primary">Активировать марафон</Button></Col>
-              <Col span={12}><Button style={{ width: "100%" }} type="danger">Деактивировать марафон</Button></Col>
+              {/* <Col span={12}><Button style={{ width: "100%" }} type="danger">Деактивировать марафон</Button></Col> */}
             </Row>
           </Content>
         </TabPane>
@@ -74,7 +99,9 @@ function View(props) {
         </TabPane>
       </Tabs>
     </Admin>
-  );
+  // : <Page404 />
+
+  return (content);
 }
 
 export default View;

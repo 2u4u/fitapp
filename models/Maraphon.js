@@ -48,6 +48,18 @@ const MaraphonSchema = new Schema({
     type: Boolean,
     required: true,
   },
+  trainings: [
+    {
+      training_id: {
+        type: String
+      }
+    }
+  ],
+  status: {
+    type: String,
+    required: true,
+    default: "default",
+  },
   date: {
     type: Date,
     default: Date.now

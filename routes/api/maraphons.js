@@ -22,9 +22,9 @@ router.post("/add",
 
     const { name, id, user, description, duration, category, tags, goals, start_date, start_time, price, free } = req.body;
     let handle = transliterate(name);
-    //check if handle is less then 30 symbols, then just add hash, if more - trim it to 30 and add hash
+    //check if handle is less then 20 symbols, then just add hash, if more - trim it to 20 and add hash
     //hash is based on handle
-    handle = (handle.length > 30) ? handle.slice(0, 30) + "_" + createHandleId(handle) : handle + "_" + createHandleId(handle);
+    handle = (handle.length > 20) ? handle.slice(0, 20) + "_" + createHandleId(handle) : handle + "_" + createHandleId(handle);
 
     Maraphon
       //check if such maraphon for this user exists
@@ -35,7 +35,7 @@ router.post("/add",
             //if this maraphon with this id exists then update it with new data
             //first change handle based on new topic 
             let newHandle = transliterate(name);
-            newHandle = (newHandle.length > 30) ? newHandle.slice(0, 30) + "_" + createHandleId(newHandle) : newHandle + "_" + createHandleId(newHandle);
+            newHandle = (newHandle.length > 20) ? newHandle.slice(0, 20) + "_" + createHandleId(newHandle) : newHandle + "_" + createHandleId(newHandle);
 
             maraphon.user = user;
             maraphon.name = name;

@@ -11,7 +11,7 @@ export const addMaraphon = (maraphonData) => dispatch => {
     .then(res => {
       dispatch({ type: LOADING, payload: false })
       dispatch({ type: NOTIFICATION, payload: { active: true, type: "success", text: "Марафон успешно добавлен" } })
-      // dispatch({ type: LOAD_POST_TO_EDIT, payload: {} })
+      dispatch(showUserMaraphons(maraphonData.user));
       setTimeout(() =>
         dispatch({ type: NOTIFICATION, payload: { active: false, type: "", text: "" } })
         , 5000);
@@ -36,7 +36,6 @@ export const showUserMaraphons = (userId) => dispatch => {
 // Show maraphon details
 export const showDetailedMaraphon = (handle) => dispatch => {
   dispatch({ type: LOADING, payload: true })
-  console.log("showDetailedMaraphon handle", handle)
   axios
     .get(`/api/maraphons/detailed/${handle}`)
     .then(res => {
@@ -53,6 +52,26 @@ export const showDetailedMaraphon = (handle) => dispatch => {
     }
     );
 };
+
+// Update list of all maraphons of this user
+export const updateUserMaraphons = (user) => dispatch => {
+  axios
+    .get(`/api/maraphons/all/${user}`)
+    .then(res => {
+      dispatch({
+        type: SHOW_ALL_USER_MARAPHONS,
+        payload: res.data
+      })
+    })
+    .catch(err => {
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    }
+    );
+};
+
 // Show post to edit
 export const openEditPost = (id, history) => dispatch => {
   dispatch({ type: LOADING, payload: true })
@@ -104,25 +123,6 @@ export const removePost = (postId, userId) => dispatch => {
         dispatch({ type: NOTIFICATION, payload: { active: false, type: "", text: "" } })
         , 5000);
 
-    })
-    .catch(err => {
-      dispatch({
-        type: GET_ERRORS,
-        payload: err.response.data
-      })
-    }
-    );
-};
-
-// Update list of all post of this user
-export const updateUserMaraphons = (user) => dispatch => {
-  axios
-    .get(`/api/maraphons/all/${user}`)
-    .then(res => {
-      dispatch({
-        type: SHOW_ALL_USER_MARAPHONS,
-        payload: res.data
-      })
     })
     .catch(err => {
       dispatch({

@@ -1,8 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { Drawer, Row, Col, Icon, Card } from 'antd';
+import draftToHtml from 'draftjs-to-html';
 import AddTrainingForm from "./AddTrainingForm"
+import { showMaraphonTrainings } from "../../actions/trainingAction";
 
 function List(props) {
+  const dispatch = useDispatch();
+  const maraphonId = useSelector(state => state.maraphon.detailed_maraphon._id);
+  const trainings = useSelector(state => state.training.trainings);
+
   const [state, setState] = useState({
     visible: false,
   });
@@ -15,23 +23,13 @@ function List(props) {
     setState({ visible: false })
   }
 
+  useEffect(() => {
+    if (maraphonId) dispatch(showMaraphonTrainings(maraphonId));
+  }, [maraphonId, dispatch]);
+
   return (
     <React.Fragment>
       <Row gutter={[16, 16]} type="flex">
-        <Col span={6}>
-          <Card
-            title="Тренировка 3"
-            style={{ height: "260px" }}
-            hoverable={true}
-            actions={[
-              <Icon type="setting" key="setting" />,
-              // <Icon type="edit" key="edit" />,
-              <Icon type="ellipsis" key="ellipsis" />,
-            ]}
-          >
-            <div style={{ height: "105px", overflow: "hidden" }}>Ea ex elit amet eiusmod ullamco. Dolor officia nisi fugiat labore commodo enim qui aliquip do. Minim qui dolore nulla esse voluptate veniam mollit ea culpa id et. Irure occaecat do elit ut culpa labore esse deserunt non Lorem Lorem. Tempor excepteur dolore ipsum nisi magna non laborum laborum.</div>
-          </Card>
-        </Col>
         <Col span={6}>
           <Card
             style={{
@@ -52,15 +50,33 @@ function List(props) {
               flexDirection: "column"
             }}>
               <Icon type="plus-circle" style={{ fontSize: '50px', marginBottom: "20px" }} />
-              <span>Добавить тренировку</span>
+              <span style={{ textAlign: "center" }}>Добавить тренировку</span>
             </div>
           </Card>
         </Col>
+        {trainings ?
+          trainings.map(training => (
+            <Col span={6} key={training._id}>
+              <Card
+                title={training.name}
+                style={{ height: "260px" }}
+                hoverable={false}
+                actions={[
+                  <Link to={`/admin/training/${training.handle}`}><Icon type="eye" key="view" /></Link>,
+                ]}
+              >
+                <div style={{ height: "105px", overflow: "hidden" }}
+                  dangerouslySetInnerHTML={{ __html: draftToHtml(JSON.parse(training.description)) }} >
+                </div>
+              </Card>
+            </Col>
+          )) : ""
+        }
       </Row>
       <Drawer
         title="Добавление тренировки"
         placement="right"
-        closable={false}
+        closable={true}
         width={520}
         onClose={onCloseAddTraining}
         visible={state.visible}
