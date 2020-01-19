@@ -10,6 +10,7 @@ function Admin(props) {
   const name = useSelector(state => state.auth.user.name);
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+  const { page } = props;
 
   const onLogOut = () => {
     dispatch(logoutUser());
@@ -24,10 +25,14 @@ function Admin(props) {
       <Layout>
         <Sider>
           <div style={{ height: "32px", background: "rgba(255, 255, 255, 0.2)", margin: "16px" }}></div>
-          <Menu mode="vertical" theme="dark">
-            <Menu.Item key="1"><Link to="/admin/account">Мой профиль</Link></Menu.Item>
-            <Menu.Item key="2"><Link to="/admin/maraphons/list">Мои марафоны</Link></Menu.Item>
-            <Menu.Item key="3"><Link to="/admin/maraphons/add">Добавить марафон</Link></Menu.Item>
+          <Menu
+            mode="vertical"
+            theme="dark"
+            selectedKeys={page}
+          >
+            <Menu.Item key="account"><Link to="/admin/account">Мой профиль</Link></Menu.Item>
+            <Menu.Item key="list"><Link to="/admin/marathons/list">Мои марафоны</Link></Menu.Item>
+            <Menu.Item key="add"><Link to="/admin/marathons/add">Добавить марафон</Link></Menu.Item>
           </Menu>
         </Sider>
         <Content>

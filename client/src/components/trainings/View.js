@@ -4,7 +4,7 @@ import draftToHtml from 'draftjs-to-html';
 
 import { showDetailedTraining } from "../../actions/trainingAction";
 
-import { PageHeader, Alert, Layout, Descriptions, Badge, Col, Row, Button } from 'antd';
+import { PageHeader, Tag, Card, Alert, Layout, Descriptions, Badge, Col, Row, Button } from 'antd';
 
 import Admin from '../admin/Admin';
 // import Page404 from '../page/Page404';
@@ -30,7 +30,7 @@ function View(props) {
   let alertMessage = <Alert message='Тренировка еще не добавлена в марафон. Для добавление тренировки в марафон нажмите кнопку "Активировать тренировку". Тренировка запустится в Дату старта' type="warning" />
 
   if (training) {
-    console.log("maraphon.status", training.status)
+    console.log("marathon.status", training.status)
     switch (training.status) {
       case 'Success':
         badgeText = "Активный"
@@ -46,8 +46,10 @@ function View(props) {
     }
   }
 
+  console.log("training", training)
+
   let content =
-    <Admin history={props.history}>
+    <Admin history={props.history} page="list">
       <PageHeader
         breadcrumb={{ routes }}
         title="Информация по тренировке"
@@ -60,12 +62,30 @@ function View(props) {
                 dangerouslySetInnerHTML={{ __html: draftToHtml(JSON.parse(training.description)) }} >
               </div>
             </Descriptions.Item>
-            {/* <Descriptions.Item label="Длительность" >{maraphon.duration}</Descriptions.Item>
-            <Descriptions.Item label="Дата старта">{maraphon.start_date}</Descriptions.Item>
-            <Descriptions.Item label="Категория">{maraphon.category}</Descriptions.Item>
-            <Descriptions.Item label="Цели">{maraphon.goals}</Descriptions.Item>
-            <Descriptions.Item label="Цена">{maraphon.price} руб.</Descriptions.Item> */}
-            <Descriptions.Item label="Статус">
+            <Descriptions.Item label="Задания тренировки" span={3}>
+              {training.tasks.map((task, taskId) => {
+                return (
+                  <Card
+                    size="small"
+                    title={"Задание " + (taskId + 1)}
+                    style={{ width: "100%", marginBottom: "20px" }}
+                    extra={
+                      <div>
+                        <Tag color={(task.type === "text") ? "green" : ((task.text === "video") ? "blue" : "purple")}>
+                          {(task.type === "text") ? "Текст" : ((task.text === "video") ? "Видео" : "Фото")}
+                        </Tag>
+                        <Tag color={(task.approval === "manualaccept") ? "#108ee9" : "#87d068"}>
+                          {(task.approval === "manualaccept") ? "Ручная проверка" : "Автоматическая проверка"}
+                        </Tag>
+                      </div>
+                    }
+                  >
+                    <p>{task.text}</p>
+                  </Card>
+                )
+              })}
+            </Descriptions.Item>
+            <Descriptions.Item label="Статус" span={3}>
               <Badge status={badgeStatus} text={badgeText} />
             </Descriptions.Item>
           </Descriptions>)
@@ -76,7 +96,7 @@ function View(props) {
         <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
           <Col span={12}><Button style={{ width: "100%" }}>Редактировать тренировку</Button></Col>
           {/* <Col span={12}><Button style={{ width: "100%" }} type="dashed">Перевести марафон в черновики</Button></Col> */}
-          <Col span={12}><Button style={{ width: "100%" }} type="primary">Активировать тренировку</Button></Col>
+          <Col span={12}><Button style={{ width: "100%" }} type="primary">Добавить в марафон</Button></Col>
           {/* <Col span={12}><Button style={{ width: "100%" }} type="danger">Деактивировать марафон</Button></Col> */}
         </Row>
       </Content>

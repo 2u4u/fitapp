@@ -6,9 +6,9 @@ const TrainingSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "users"
   },
-  maraphon: {
+  marathon: {
     type: Schema.Types.ObjectId,
-    ref: "maraphon"
+    ref: "marathon"
   },
   name: {
     type: String,
@@ -21,6 +21,24 @@ const TrainingSchema = new Schema({
   description: {
     type: String,
     required: true
+  },
+  tasks: [
+    {
+      text: {
+        type: String,
+      },
+      type: {
+        type: String,
+      },
+      approval: {
+        type: String,
+      },
+    }
+  ],
+  status: {
+    type: String,
+    required: true,
+    default: "default",
   },
   handle: {
     type: String,

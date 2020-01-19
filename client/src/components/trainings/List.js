@@ -4,11 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { Drawer, Row, Col, Icon, Card } from 'antd';
 import draftToHtml from 'draftjs-to-html';
 import AddTrainingForm from "./AddTrainingForm"
-import { showMaraphonTrainings } from "../../actions/trainingAction";
+import { showMarathonTrainings } from "../../actions/trainingAction";
 
 function List(props) {
   const dispatch = useDispatch();
-  const maraphonId = useSelector(state => state.maraphon.detailed_maraphon._id);
+  const marathonId = useSelector(state => state.marathon.detailed_marathon._id);
   const trainings = useSelector(state => state.training.trainings);
 
   const [state, setState] = useState({
@@ -24,8 +24,8 @@ function List(props) {
   }
 
   useEffect(() => {
-    if (maraphonId) dispatch(showMaraphonTrainings(maraphonId));
-  }, [maraphonId, dispatch]);
+    if (marathonId) dispatch(showMarathonTrainings(marathonId));
+  }, [marathonId, dispatch]);
 
   return (
     <React.Fragment>

@@ -2,7 +2,7 @@ import React from 'react';
 import { Layout, PageHeader } from 'antd';
 
 import Admin from '../admin/Admin';
-import AddMaraphonForm from './AddMaraphonForm';
+import AddMarathonForm from './AddMarathonForm';
 
 const { Content } = Layout;
 
@@ -12,13 +12,13 @@ function Add(props) {
     breadcrumbName: 'Список марафонов',
   },];
   return (
-    <Admin history={props.history}>
+    <Admin history={props.history} page="add">
       <PageHeader
         breadcrumb={{ routes }}
         title="Добавление нового марафона"
       />
       <Content style={{ background: '#fff', padding: 24 }}>
-        <AddMaraphonForm />
+        <AddMarathonForm />
       </Content>
     </Admin>
   );

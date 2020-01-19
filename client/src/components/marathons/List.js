@@ -2,46 +2,39 @@ import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import draftToHtml from 'draftjs-to-html';
-import { showUserMaraphons } from "../../actions/maraphonAction";
+import { showUserMarathons } from "../../actions/marathonAction";
 
 import Admin from "../admin/Admin"
-import AddMaraphonForm from "./AddMaraphonForm"
-import { Drawer, Row, Col, Icon, PageHeader, Card } from 'antd';
-
-const routes = [
-  {
-    path: 'first',
-    breadcrumbName: 'Список марафонов',
-  },
-];
+import AddMarathonForm from "./AddMarathonForm"
+import { Drawer, Row, Col, Icon, Breadcrumb, Card } from 'antd';
 
 function List(props) {
   const dispatch = useDispatch();
   const userId = useSelector(state => state.auth.user.id);
-  const maraphons = useSelector(state => state.maraphon.maraphons);
+  const marathons = useSelector(state => state.marathon.marathons);
 
   const [state, setState] = useState({
     visible: false,
   });
 
   useEffect(() => {
-    dispatch(showUserMaraphons(userId));
+    dispatch(showUserMarathons(userId));
   }, [userId, dispatch]);
 
-  const showAddMaraphon = () => {
+  const showAddMarathon = () => {
     setState({ visible: true })
   }
 
-  const onCloseAddMaraphon = () => {
+  const onCloseAddMarathon = () => {
     setState({ visible: false })
   }
 
   return (
-    <Admin history={props.history}>
-      <PageHeader
-        breadcrumb={{ routes }}
-        title="Список ваших марафонов"
-      />
+    <Admin history={props.history} page="list">
+      <Breadcrumb style={{ margin: "20px 0" }}>
+        <Breadcrumb.Item>Главная</Breadcrumb.Item>
+        <Breadcrumb.Item>Мои марафоны</Breadcrumb.Item>
+      </Breadcrumb>
       <Row gutter={[16, 16]} type="flex">
         <Col span={6}>
           <Card
@@ -53,7 +46,7 @@ function List(props) {
               flexDirection: "column"
             }}
             hoverable={true}
-            onClick={showAddMaraphon}
+            onClick={showAddMarathon}
           >
             <div style={{
               display: "flex",
@@ -66,21 +59,21 @@ function List(props) {
             </div>
           </Card>
         </Col>
-        {maraphons ?
-          maraphons.map(maraphon => (
-            <Col span={6} key={maraphon._id}>
+        {marathons ?
+          marathons.map(marathon => (
+            <Col span={6} key={marathon._id}>
               <Card
-                title={maraphon.name}
+                title={marathon.name}
                 style={{ height: "260px" }}
                 hoverable={false}
                 actions={[
-                  // <Link to="/admin/maraphon/news"><Icon type="warning" theme="twoTone" twoToneColor="#eb2f96" key="users" /></Link>,
-                  <Link to={`/admin/maraphon/${maraphon.handle}`}><Icon type="eye" key="view" /></Link>,
+                  // <Link to="/admin/marathon/news"><Icon type="warning" theme="twoTone" twoToneColor="#eb2f96" key="users" /></Link>,
+                  <Link to={`/admin/marathon/${marathon.handle}`}><Icon type="eye" key="view" /></Link>,
                   // <Link to="/admin/trainings/add"><Icon type="edit" key="edit" /></Link>,
                 ]}
               >
                 <div style={{ height: "105px", overflow: "hidden" }}
-                  dangerouslySetInnerHTML={{ __html: draftToHtml(JSON.parse(maraphon.description)) }} >
+                  dangerouslySetInnerHTML={{ __html: draftToHtml(JSON.parse(marathon.description)) }} >
                 </div>
               </Card>
             </Col>
@@ -92,10 +85,10 @@ function List(props) {
         placement="right"
         closable={true}
         width={520}
-        onClose={onCloseAddMaraphon}
+        onClose={onCloseAddMarathon}
         visible={state.visible}
       >
-        <AddMaraphonForm />
+        <AddMarathonForm />
       </Drawer>
     </Admin>
   );

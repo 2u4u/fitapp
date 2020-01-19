@@ -12,7 +12,7 @@ const { TextArea } = Input;
 function AddTrainingForm(props) {
   const dispatch = useDispatch();
   const userId = useSelector(state => state.auth.user.id);
-  const maraphonId = useSelector(state => state.maraphon.detailed_maraphon._id);
+  const marathonId = useSelector(state => state.marathon.detailed_marathon._id);
   let error = {};
   error = useSelector(state => state.error);
   const loading = useSelector(state => state.training.loading);
@@ -44,14 +44,25 @@ function AddTrainingForm(props) {
     setState(state => ({ ...state, "trainingNameShow": !e.target.checked }))
   }
 
+  const handleTaskChange = (e, taskIndex) => {
+    let { name, value } = e.target;
+    setState(state => ({
+      ...state, tasks: state.tasks.map((task) => {
+        if (taskIndex === task.id) {
+          task[name] = value
+        }
+        return task
+      })
+    }));
+  }
+
   const handleAddTask = (e) => {
     setState(state => ({
       ...state, tasks: [...state.tasks, {
         id: uniqueId("task"),
-        type: "",
         text: "",
-        img: "",
-        video: ""
+        type: "text",
+        approval: "manualaccept"
       }]
     }));
   }
@@ -59,12 +70,13 @@ function AddTrainingForm(props) {
   const onSubmit = (e) => {
     e.preventDefault();
     const newTraining = {
-      maraphon: maraphonId,
+      marathon: marathonId,
       user: userId,
       name: state.trainingName,
       show_name: state.trainingNameShow,
       description: JSON.stringify(convertToRaw(editorState.getCurrentContent())),
-      description_has_text: editorState.getCurrentContent().hasText()
+      description_has_text: editorState.getCurrentContent().hasText(),
+      tasks: state.tasks
     };
     dispatch(addTraining(newTraining));
   }
@@ -106,17 +118,17 @@ function AddTrainingForm(props) {
       {state.tasks.map((task, taskId) => {
         return (<Card style={{ width: "100%", marginBottom: "20px" }} key={taskId}>
           <Form.Item label={"Введите описание задания №" + (taskId + 1)}>
-            <TextArea rows={3} />
+            <TextArea rows={3} name="text" onChange={(e) => handleTaskChange(e, task.id)} />
           </Form.Item>
           <Form.Item label="Выберите тип задания. Ученик должен ответ содержащий">
-            <Radio.Group defaultValue="text" buttonStyle="solid">
+            <Radio.Group name="type" onChange={(e) => handleTaskChange(e, task.id)} defaultValue="text" buttonStyle="solid">
               <Radio.Button value="text">Текст</Radio.Button>
               <Radio.Button value="photo">Фото</Radio.Button>
               <Radio.Button value="video">Видео</Radio.Button>
             </Radio.Group>
           </Form.Item>
           <Form.Item label="Подтверждение ответа">
-            <Radio.Group defaultValue="manualaccept" buttonStyle="solid">
+            <Radio.Group name="approval" onChange={(e) => handleTaskChange(e, task.id)} defaultValue="manualaccept" buttonStyle="solid">
               <Radio.Button value="autoaccept">Автоматически принимать ответ</Radio.Button>
               <Radio.Button value="manualaccept">Необходима проверка тренером</Radio.Button>
             </Radio.Group>

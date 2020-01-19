@@ -11,12 +11,12 @@ import Admin from "../components/admin/Admin"
 import Login from "../components/auth/Login"
 import Register from "../components/auth/Register"
 import Account from "../components/admin/Account"
-import MaraphonsAdd from "../components/maraphons/Add";
-import MaraphonsList from "../components/maraphons/List";
-import MaraphonNews from "../components/maraphons/News";
+import MarathonsAdd from "../components/marathons/Add";
+import MarathonsList from "../components/marathons/List";
+import MarathonNews from "../components/marathons/News";
 import TrainingsAdd from "../components/trainings/AddTrainingForm";
 import TrainingsList from "../components/trainings/List";
-import MaraphonView from "../components/maraphons/View"
+import MarathonView from "../components/marathons/View"
 import TrainingView from "../components/trainings/View"
 import Page404 from "../components/page/Page404"
 
@@ -52,10 +52,10 @@ function App() {
         <PrivateRoute exact path="/" component={Account} />
         <PrivateRoute exact path="/admin" component={Account} />
         <PrivateRoute exact path="/admin/account" component={Account} />
-        <PrivateRoute path={"/admin/maraphons/list"} component={MaraphonsList} />
-        <PrivateRoute path={"/admin/maraphons/add"} component={MaraphonsAdd} />
-        <PrivateRoute path={"/admin/maraphon/:handle"} component={MaraphonView} />
-        <PrivateRoute path={"/admin/maraphon/news"} component={MaraphonNews} />
+        <PrivateRoute path={"/admin/marathons/list"} component={MarathonsList} />
+        <PrivateRoute path={"/admin/marathons/add"} component={MarathonsAdd} />
+        <PrivateRoute path={"/admin/marathon/:handle"} component={MarathonView} />
+        <PrivateRoute path={"/admin/marathon/news"} component={MarathonNews} />
         <PrivateRoute path={"/admin/training/:handle"} component={TrainingView} />
         <PrivateRoute path={"/admin/trainings/list"} component={TrainingsList} />
         <PrivateRoute path={"/admin/trainings/add"} component={TrainingsAdd} />

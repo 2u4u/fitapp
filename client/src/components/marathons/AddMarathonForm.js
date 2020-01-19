@@ -7,32 +7,37 @@ import moment from 'moment';
 
 // import { stateToHTML } from 'draft-js-export-html';
 
-import { addMaraphon } from "../../actions/maraphonAction";
+import { addMarathon } from "../../actions/marathonAction";
 import { Button, Row, Col, Form, Alert, TimePicker, Input, Select, Checkbox, DatePicker } from 'antd';
 
 const { Option } = Select;
 
-function AddMaraphonForm(props) {
+function AddMarathonForm(props) {
   const dispatch = useDispatch();
   // const name = useSelector(state => state.auth.user.name);
   const userId = useSelector(state => state.auth.user.id);
   let error = {};
   error = useSelector(state => state.error);
-  const loading = useSelector(state => state.maraphon.loading);
-  const notification = useSelector(state => state.maraphon.notification);
+  const loading = useSelector(state => state.marathon.loading);
+  const notification = useSelector(state => state.marathon.notification);
+
+  let { marathon } = props;
+  let handle = marathon ? marathon.handle : undefined;
+  let buttonText = handle ? "Изменить марафона" : "Добавить марафона"
+  let buttonLoading = handle ? "Изменение марафона" : "Добавление марафона"
 
   const [state, setState] = useState({
-    maraphonId: "",
-    maraphonName: "",
-    maraphonNameCheckbox: false,
-    maraphonDescription: "",
-    maraphonDuration: "",
-    maraphonGoal: ['a10', 'c12'],
-    maraphonProgramm: "",
-    maraphonCategory: "",
-    maraphonStartDate: "",
-    maraphonStartTime: "",
-    maraphonPrice: ""
+    marathonId: marathon ? marathon._id : "",
+    marathonName: marathon ? marathon.name : "",
+    marathonNameCheckbox: marathon ? marathon.free : false,
+    marathonDescription: marathon ? marathon.description : "",
+    marathonDuration: marathon ? marathon.duration : "",
+    marathonGoals: marathon ? marathon.goals : ['a10', 'c12'],
+    // marathonGoals: ['a10', 'c12'],
+    marathonCategory: marathon ? marathon.category : "",
+    marathonStartDate: marathon ? moment(marathon.start_date, 'YYYY/MM/DD') : undefined,
+    marathonStartTime: marathon ? moment(marathon.start_time, 'HH:mm:ss') : undefined,// moment('09:00:00', 'HH:mm:ss'),
+    marathonPrice: marathon ? marathon.price : "",
   });
 
   const [editorState, setEditorState] = useState(
@@ -55,18 +60,25 @@ function AddMaraphonForm(props) {
   }
 
   const handleSelectChange = (value) => {
-    delete error["maraphonGoal"];
-    setState(state => ({ ...state, "maraphonGoal": value }));
+    delete error["marathonGoals"];
+    setState(state => ({ ...state, "marathonGoals": value }));
   }
 
   const handleDateChange = (date, dateString) => {
-    delete error["maraphonStartDate"];
-    setState(state => ({ ...state, "maraphonStartDate": date }));
+    console.log("handleDateChange", date, dateString)
+    delete error["marathonStartDate"];
+    setState(state => ({ ...state, "marathonStartDate": date }));
+  }
+
+  const handleTimeChange = (time, timeString) => {
+    console.log("handleTimeChange", time, timeString)
+    delete error["marathonStartTime"];
+    setState(state => ({ ...state, "marathonStartTime": time }));
   }
 
   const handleCheckboxChange = (e) => {
-    setState(state => ({ ...state, "maraphonPrice": "" }))
-    setState(state => ({ ...state, "maraphonNameCheckbox": e.target.checked }))
+    setState(state => ({ ...state, "marathonPrice": "" }))
+    setState(state => ({ ...state, "marathonNameCheckbox": e.target.checked }))
   }
 
   const disabledDate = (current) => {
@@ -76,43 +88,43 @@ function AddMaraphonForm(props) {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    const newMaraphon = {
-      id: state.maraphonId, //when edit
+    const newMarathon = {
+      id: state.marathonId, //when edit
       user: userId,
-      name: state.maraphonName,
+      name: state.marathonName,
       description: JSON.stringify(convertToRaw(editorState.getCurrentContent())),
-      duration: state.maraphonDuration,
-      category: state.maraphonCategory,
-      goal: state.maraphonGoal,
-      start_date: state.maraphonStartDate,
-      price: state.maraphonPrice,
-      start_time: state.maraphonStartTime,
-      free: state.maraphonNameCheckbox
+      duration: state.marathonDuration,
+      category: state.marathonCategory,
+      goals: state.marathonGoals,
+      start_date: state.marathonStartDate,
+      price: state.marathonPrice,
+      start_time: state.marathonStartTime,
+      free: state.marathonNameCheckbox
     };
-    dispatch(addMaraphon(newMaraphon));
+    dispatch(addMarathon(newMarathon, handle));
   }
 
   return (
     <Form onSubmit={onSubmit}>
       <Form.Item
         label="Название марафона"
-        validateStatus={error.maraphonName ? "error" : ""}
-        help={error.maraphonName ? error.maraphonName : ""}
+        validateStatus={error.marathonName ? "error" : ""}
+        help={error.marathonName ? error.marathonName : ""}
         required={true}
       >
         <Input
           type="text"
           placeholder="Введите название марафона"
-          name="maraphonName"
-          value={state.maraphonName}
+          name="marathonName"
+          value={state.marathonName}
           onChange={(e) => handleInputChange(e)}
           style={{ width: '100%' }}
         />
       </Form.Item>
       <Form.Item
         label="Описание марафона"
-        validateStatus={error.maraphonDescription ? "error" : ""}
-        help={error.maraphonDescription ? error.maraphonDescription : ""}
+        validateStatus={error.marathonDescription ? "error" : ""}
+        help={error.marathonDescription ? error.marathonDescription : ""}
         required={true}
       >
         <Editor
@@ -122,15 +134,15 @@ function AddMaraphonForm(props) {
       </Form.Item>
       <Form.Item
         label="Длительность марафона"
-        validateStatus={error.maraphonDuration ? "error" : ""}
-        help={error.maraphonDuration ? error.maraphonDuration : ""}
+        validateStatus={error.marathonDuration ? "error" : ""}
+        help={error.marathonDuration ? error.marathonDuration : ""}
         required={true}
       >
         <Input
           type="text"
           placeholder="Введите количество дней"
-          name="maraphonDuration"
-          value={state.maraphonDuration}
+          name="marathonDuration"
+          value={state.marathonDuration}
           onChange={(e) => handleInputChange(e)}
           style={{ width: '200px' }}
           addonAfter="дней"
@@ -138,32 +150,32 @@ function AddMaraphonForm(props) {
       </Form.Item>
       <Form.Item
         label="Категория марафона"
-        validateStatus={error.maraphonCategory ? "error" : ""}
-        help={error.maraphonCategory ? error.maraphonCategory : ""}
+        validateStatus={error.marathonCategory ? "error" : ""}
+        help={error.marathonCategory ? error.marathonCategory : ""}
         required={true}
       >
         <Input
           type="text"
           placeholder="Введите цель"
-          name="maraphonCategory"
-          value={state.maraphonCategory}
+          name="marathonCategory"
+          value={state.marathonCategory}
           onChange={(e) => handleInputChange(e)}
           style={{ width: '100%' }}
         />
       </Form.Item>
       <Form.Item
         label="Цель марафона"
-        validateStatus={error.maraphonGoal ? "error" : ""}
-        help={error.maraphonGoal ? error.maraphonGoal : ""}
+        validateStatus={error.marathonGoals ? "error" : ""}
+        help={error.marathonGoals ? error.marathonGoals : ""}
         required={true}
       >
         <Select
           mode="multiple"
-          name="maraphonGoal"
+          name="marathonGoals"
           style={{ width: '100%' }}
           placeholder="Please select"
           // defaultValue={['a10', 'c12']}
-          value={state.maraphonGoal}
+          value={state.marathonGoals}
           onChange={handleSelectChange}
         >
           {children}
@@ -171,36 +183,41 @@ function AddMaraphonForm(props) {
       </Form.Item>
       <Form.Item
         label="Дата старта марафона"
-        validateStatus={error.maraphonStartDate ? "error" : ""}
-        help={error.maraphonStartDate ? error.maraphonStartDate : ""}
+        validateStatus={error.marathonStartDate ? "error" : ""}
+        help={error.marathonStartDate ? error.marathonStartDate : ""}
         required={true}
       >
         <DatePicker
-          name="maraphonStartDate"
-          defaultPickerValue={state.maraphonStartDate}
+          name="marathonStartDate"
+          defaultValue={state.marathonStartDate}
+          defaultPickerValue={state.marathonStartDate}
           onChange={handleDateChange}
           placeholder="Дата старта"
           disabledDate={disabledDate}
+        // showTime
+        // placeholder="Выбрать время старта"
+        // onOk={onOk}
         />
       </Form.Item>
       <Form.Item
         label="Время старта марафона (МСК)"
-        validateStatus={error.maraphonStartTime ? "error" : ""}
-        help={error.maraphonStartTime ? error.maraphonStartTime : ""}
+        validateStatus={error.marathonStartTime ? "error" : ""}
+        help={error.marathonStartTime ? error.marathonStartTime : ""}
       >
         <TimePicker
-          name="maraphonStartTime"
-          onChange={handleDateChange}
-          defaultOpenValue={moment('09:00:00', 'HH:mm:ss')}
-          defaultValue={moment('09:00:00', 'HH:mm:ss')}
+          name="marathonStartTime"
+          onChange={handleTimeChange}
+          allowClear={false}
+          defaultOpenValue={state.marathonStartTime}
+          defaultValue={state.marathonStartTime}
           placeholder="Время старта"
           style={{ width: "171px" }}
         />
       </Form.Item>
       <Form.Item
         label="Стоимость марафона"
-        validateStatus={error.maraphonPrice ? "error" : ""}
-        help={error.maraphonPrice ? error.maraphonPrice : ""}
+        validateStatus={error.marathonPrice ? "error" : ""}
+        help={error.marathonPrice ? error.marathonPrice : ""}
         required={true}
       >
         <Row>
@@ -208,12 +225,12 @@ function AddMaraphonForm(props) {
             <Input
               type="text"
               placeholder="Введите цену"
-              name="maraphonPrice"
-              value={state.maraphonPrice}
+              name="marathonPrice"
+              value={state.marathonPrice}
               onChange={(e) => handleInputChange(e)}
               style={{ width: '200px' }}
               addonAfter="рублей"
-              disabled={state.maraphonNameCheckbox}
+              disabled={state.marathonNameCheckbox}
             />
           </Col>
           <Col span={12}>
@@ -230,10 +247,10 @@ function AddMaraphonForm(props) {
         <div style={{ margin: "20px 0" }}><Alert message={notification.text} type="success" /></div> : ""
       }
       <Button type="primary" htmlType="submit" className="login-form-button" loading={loading}>
-        {loading ? "Добавление марафона" : "Добавить марафон"}
+        {loading ? buttonLoading : buttonText}
       </Button>
     </Form>
   );
 }
 
-export default AddMaraphonForm;
+export default AddMarathonForm;

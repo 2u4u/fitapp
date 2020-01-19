@@ -1,7 +1,7 @@
 const Validator = require("validator");
 const _ = require("lodash");
 
-module.exports = function validateAddMaraphon(data) {
+module.exports = function validateAddMarathon(data) {
   let errors = {};
 
   data.name = _.isEmpty(data.name) ? "" : data.name;
@@ -14,33 +14,32 @@ module.exports = function validateAddMaraphon(data) {
 
 
   if (Validator.isEmpty(data.name)) {
-    errors.maraphonName = "Не заполнено название марафона";
+    errors.marathonName = "Не заполнено название марафона";
   }
 
   if (Validator.isEmpty(data.description)) {
-    errors.maraphonDescription = "Не заполнено описание марафона";
+    errors.marathonDescription = "Не заполнено описание марафона";
   }
 
   if (Validator.isEmpty(data.duration)) {
-    errors.maraphonDuration = "Не заполнена длительность марафона";
+    errors.marathonDuration = "Не заполнена длительность марафона";
   }
 
   if (Validator.isEmpty(data.category)) {
-    errors.maraphonCategory = "Не заполнена категория марафона";
+    errors.marathonCategory = "Не заполнена категория марафона";
   }
 
   // if (Validator.isEmpty(data.goals)) {
-  //   errors.maraphonGoal = "Не заполнены цели марафона";
+  //   errors.marathonGoal = "Не заполнены цели марафона";
   // }
 
   if (Validator.isEmpty(data.start_date)) {
-    errors.maraphonStartDate = "Не дата начала марафона";
+    errors.marathonStartDate = "Не дата начала марафона";
   }
 
-  console.log("data.free", data.free)
   if (Validator.isEmpty(data.price)) {
     if (!data.free) {
-      errors.maraphonPrice = "Не заполнена стоимость марафона";
+      errors.marathonPrice = "Не заполнена стоимость марафона";
     }
   }
 

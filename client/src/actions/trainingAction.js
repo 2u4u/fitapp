@@ -1,5 +1,5 @@
 import axios from "axios";
-import { GET_ERRORS, TRAINING_LOADING, NOTIFICATION, SHOW_ALL_MARAPHON_TRAININGS, SHOW_DETAILED_TRAINING } from "./types";
+import { GET_ERRORS, TRAINING_LOADING, NOTIFICATION, SHOW_ALL_MARATHON_TRAININGS, SHOW_DETAILED_TRAINING } from "./types";
 
 // Add training
 export const addTraining = (trainingData) => dispatch => {
@@ -10,7 +10,7 @@ export const addTraining = (trainingData) => dispatch => {
       dispatch({ type: TRAINING_LOADING, payload: false })
       dispatch({ type: NOTIFICATION, payload: { active: true, type: "success", text: "Тренировка успешно добавлена" } })
       // dispatch({ type: LOAD_POST_TO_EDIT, payload: {} })
-      dispatch(showMaraphonTrainings(trainingData.maraphon));
+      dispatch(showMarathonTrainings(trainingData.marathon));
       setTimeout(() =>
         dispatch({ type: NOTIFICATION, payload: { active: false, type: "", text: "" } })
         , 5000);
@@ -26,10 +26,10 @@ export const addTraining = (trainingData) => dispatch => {
     );
 };
 
-// Show all trainings in this maraphon
-export const showMaraphonTrainings = (maraphonId) => dispatch => {
+// Show all trainings in this marathon
+export const showMarathonTrainings = (marathonId) => dispatch => {
   dispatch({ type: TRAINING_LOADING, payload: true })
-  dispatch(updateMaraphonTrainings(maraphonId));
+  dispatch(updateMarathonTrainings(marathonId));
 };
 
 // Show training details
@@ -52,13 +52,13 @@ export const showDetailedTraining = (handle) => dispatch => {
     );
 };
 
-// Update list of all trainings in this maraphon
-export const updateMaraphonTrainings = (maraphon) => dispatch => {
+// Update list of all trainings in this marathon
+export const updateMarathonTrainings = (marathon) => dispatch => {
   axios
-    .get(`/api/trainings/all/${maraphon}`)
+    .get(`/api/trainings/all/${marathon}`)
     .then(res => {
       dispatch({
-        type: SHOW_ALL_MARAPHON_TRAININGS,
+        type: SHOW_ALL_MARATHON_TRAININGS,
         payload: res.data
       })
     })

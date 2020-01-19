@@ -1,4 +1,4 @@
-import { TRAINING_LOADING, NOTIFICATION, LOAD_POST_TO_EDIT, SHOW_ALL_MARAPHON_TRAININGS, SHOW_ALL_TRAININGS, SHOW_DETAILED_TRAINING } from "../actions/types";
+import { TRAINING_LOADING, NOTIFICATION, LOAD_POST_TO_EDIT, SHOW_ALL_MARATHON_TRAININGS, SHOW_ALL_TRAININGS, SHOW_DETAILED_TRAINING } from "../actions/types";
 // import _ from "lodash";
 
 const initialState = {
@@ -17,7 +17,7 @@ export default function (state = initialState, action) {
         ...state,
         loading: action.payload
       };
-    case SHOW_ALL_MARAPHON_TRAININGS:
+    case SHOW_ALL_MARATHON_TRAININGS:
       return {
         ...state,
         trainings: action.payload,

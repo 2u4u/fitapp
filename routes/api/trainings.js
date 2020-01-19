@@ -9,7 +9,7 @@ const validateAddTraining = require("../../validation/training");
 
 // Load post model
 const Training = require("../../models/Training");
-const Maraphon = require("../../models/Maraphon");
+const Marathon = require("../../models/Marathon");
 
 // @route   POST api/trainings/add
 // @desk    Add post
@@ -21,7 +21,9 @@ router.post("/add",
 
     if (!isValid) return res.status(400).json(errors);
 
-    const { user, maraphon, id, name, description, show_name } = req.body;
+    console.log("training add req.body", req.body)
+
+    const { user, marathon, id, name, description, show_name, tasks } = req.body;
     let handle = transliterate(name);
     //check if handle is less then 20 symbols, then just add hash, if more - trim it to 20 and add hash
     //hash is based on handle
@@ -42,6 +44,7 @@ router.post("/add",
             training.name = name;
             training.description = description;
             training.show_name = show_name;
+            training.tasks = tasks
 
             training
               .save()
@@ -54,19 +57,19 @@ router.post("/add",
           }
         } else {
           //if user doesn't have Training with such name
-          const newTraining = new Training({ maraphon, user, name, description, show_name, handle });
+          const newTraining = new Training({ marathon, user, name, description, show_name, handle, tasks });
 
           newTraining
             .save()
             .then(savedTraining => {
-              Maraphon
-                .findById(maraphon)
-                .then(maraphon => {
-                  maraphon.trainings.push({ "training_id": savedTraining._id })
-                  maraphon
+              Marathon
+                .findById(marathon)
+                .then(marathon => {
+                  marathon.trainings.push({ "training_id": savedTraining._id })
+                  marathon
                     .save()
-                    .then(savedMaraphon => res.json(savedTraining))
-                    .catch(err => console.log("Maraphon save training err -> ", err));
+                    .then(savedMarathon => res.json(savedTraining))
+                    .catch(err => console.log("Marathon save training err -> ", err));
                 })
             })
             .catch(err => console.log("Training save err -> ", err));
@@ -75,14 +78,14 @@ router.post("/add",
       });
   });
 
-// @route   GET api/trainings/all/:maraphon
-// @desk    Return all trainings in exact maraphon
+// @route   GET api/trainings/all/:marathon
+// @desk    Return all trainings in exact marathon
 // @access  Public
-router.get("/all/:maraphon", (req, res) => {
+router.get("/all/:marathon", (req, res) => {
   Training
-    .find({ maraphon: req.params.maraphon })
+    .find({ marathon: req.params.marathon })
     .then(trainings => res.json(trainings))
-    .catch(err => console.log("Trainings show for exact maraphon all err -> ", err));
+    .catch(err => console.log("Trainings show for exact marathon all err -> ", err));
 });
 
 // @route   GET api/trainings/detailed/:handle

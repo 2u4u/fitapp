@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const MaraphonSchema = new Schema({
+const MarathonSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: "users"
@@ -29,17 +29,16 @@ const MaraphonSchema = new Schema({
     type: String,
     required: true
   },
-  goals: [
-    {
-      goal: {
-        type: String,
-        required: true
-      }
-    }
-  ],
+  goals: {
+    type: Array
+  },
   start_date: {
     type: Date,
     required: true
+  },
+  start_time: {
+    type: Date,
+    // required: true
   },
   price: {
     type: String
@@ -66,4 +65,4 @@ const MaraphonSchema = new Schema({
   }
 });
 
-module.exports = Maraphon = mongoose.model("maraphon", MaraphonSchema);
+module.exports = Marathon = mongoose.model("marathon", MarathonSchema);
