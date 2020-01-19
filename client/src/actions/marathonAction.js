@@ -44,7 +44,6 @@ export const showDetailedMarathon = (handle) => dispatch => {
   axios
     .get(`/api/marathons/detailed/${handle}`)
     .then(res => {
-      console.log("showDetailedMarathon res =>", res)
       dispatch({
         type: SHOW_DETAILED_MARATHON,
         payload: res.data

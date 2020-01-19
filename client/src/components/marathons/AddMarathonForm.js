@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { EditorState, convertToRaw } from 'draft-js';
+import { EditorState, convertToRaw, convertFromRaw } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import { useDispatch, useSelector } from "react-redux";
 import '../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
@@ -33,15 +33,16 @@ function AddMarathonForm(props) {
     marathonDescription: marathon ? marathon.description : "",
     marathonDuration: marathon ? marathon.duration : "",
     marathonGoals: marathon ? marathon.goals : ['a10', 'c12'],
-    // marathonGoals: ['a10', 'c12'],
     marathonCategory: marathon ? marathon.category : "",
     marathonStartDate: marathon ? moment(marathon.start_date, 'YYYY/MM/DD') : undefined,
     marathonStartTime: marathon ? moment(marathon.start_time, 'HH:mm:ss') : undefined,// moment('09:00:00', 'HH:mm:ss'),
     marathonPrice: marathon ? marathon.price : "",
   });
 
+  const editorContent = marathon ? EditorState.createWithContent(convertFromRaw(JSON.parse(marathon.description))) : EditorState.createEmpty();
+
   const [editorState, setEditorState] = useState(
-    EditorState.createEmpty(),
+    { editorState: editorContent }
   );
 
   const children = [];
@@ -50,7 +51,7 @@ function AddMarathonForm(props) {
   }
 
   const handleEditorChange = (editorState) => {
-    setEditorState(editorState);
+    setEditorState({ editorState });
   }
 
   const handleInputChange = (e) => {
@@ -65,13 +66,11 @@ function AddMarathonForm(props) {
   }
 
   const handleDateChange = (date, dateString) => {
-    console.log("handleDateChange", date, dateString)
     delete error["marathonStartDate"];
     setState(state => ({ ...state, "marathonStartDate": date }));
   }
 
   const handleTimeChange = (time, timeString) => {
-    console.log("handleTimeChange", time, timeString)
     delete error["marathonStartTime"];
     setState(state => ({ ...state, "marathonStartTime": time }));
   }
@@ -128,7 +127,7 @@ function AddMarathonForm(props) {
         required={true}
       >
         <Editor
-          editorState={editorState}
+          editorState={editorState.editorState}
           onEditorStateChange={handleEditorChange}
         />
       </Form.Item>
