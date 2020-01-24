@@ -1,44 +1,38 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import draftToHtml from 'draftjs-to-html';
-import { showUserMarathons, deleteMarathon } from "../../actions/marathonAction";
+import { Drawer, Row, Col, Icon, Card, Tooltip, Popconfirm } from 'antd';
+import AddFlowForm from "./AddFlowForm"
+import { showMarathonFlows, deleteFlow } from "../../actions/flowAction";
 
-import Admin from "../admin/Admin"
-import AddMarathonForm from "./AddMarathonForm"
-import { Drawer, Row, Col, Icon, Breadcrumb, Card, Tooltip, Popconfirm } from 'antd';
-
-function List(props) {
+function FlowList(props) {
   const dispatch = useDispatch();
-  const userId = useSelector(state => state.auth.user.id);
-  const marathons = useSelector(state => state.marathon.marathons);
+  const marathonId = useSelector(state => state.marathon.detailed_marathon._id);
+  const marathonHandle = useSelector(state => state.marathon.detailed_marathon.handle);
+  const flows = useSelector(state => state.flow.flows);
 
   const [state, setState] = useState({
     visible: false,
   });
 
-  useEffect(() => {
-    dispatch(showUserMarathons(userId));
-  }, [userId, dispatch]);
-
-  const showAddMarathon = () => {
+  const showAddFlow = () => {
     setState({ visible: true })
   }
 
-  const onCloseAddMarathon = () => {
+  const onCloseAddFlow = () => {
     setState({ visible: false })
   }
 
-  const onDeleteMarathon = (marathonId, userId) => {
-    dispatch(deleteMarathon(marathonId, userId));
+  const onDeleteFlow = (flowId, marathonId) => {
+    dispatch(deleteFlow(flowId, marathonId));
   }
 
+  useEffect(() => {
+    if (marathonId) dispatch(showMarathonFlows(marathonId));
+  }, [marathonId, dispatch]);
+
   return (
-    <Admin history={props.history} page="list">
-      <Breadcrumb style={{ margin: "20px 0" }}>
-        <Breadcrumb.Item>Главная</Breadcrumb.Item>
-        <Breadcrumb.Item>Мои марафоны</Breadcrumb.Item>
-      </Breadcrumb>
+    <React.Fragment>
       <Row gutter={[16, 16]} type="flex">
         <Col span={6}>
           <Card
@@ -50,7 +44,8 @@ function List(props) {
               flexDirection: "column"
             }}
             hoverable={true}
-            onClick={showAddMarathon}
+            onClick={showAddFlow}
+
           >
             <div style={{
               display: "flex",
@@ -59,24 +54,24 @@ function List(props) {
               flexDirection: "column"
             }}>
               <Icon type="plus-circle" style={{ fontSize: '50px', marginBottom: "20px" }} />
-              <span>Добавить марафон</span>
+              <span style={{ textAlign: "center" }}>Добавить новый поток</span>
             </div>
           </Card>
         </Col>
-        {marathons ?
-          marathons.map(marathon => (
-            <Col span={6} key={marathon._id}>
+        {flows ?
+          flows.map(flow => (
+            <Col span={6} key={flow._id}>
               <Card
-                title={marathon.name}
+                title={flow.name}
                 style={{ height: "260px" }}
                 hoverable={false}
                 actions={[
-                  <Tooltip title="Посмотреть подробную информацию о марафоне">
-                    <Link to={`/admin/marathon/${marathon.handle}`}><Icon type="eye" key="view" /></Link>
+                  <Tooltip title="Посмотреть подробную информацию о потоке">
+                    <Link to={`/admin/${marathonHandle}/${flow.handle}`}><Icon type="eye" key="view" /></Link>
                   </Tooltip>,
                   <Popconfirm
-                    title="Вы уверены, что хотите удалить марафон?"
-                    onConfirm={() => onDeleteMarathon(marathon._id, userId)}
+                    title="Вы уверены, что хотите удалить поток?"
+                    onConfirm={() => onDeleteFlow(flow._id, marathonId)}
                     okText="Уверен, удаляем"
                     cancelText="Нет, не удалять"
                     icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
@@ -88,7 +83,8 @@ function List(props) {
                 ]}
               >
                 <div style={{ height: "105px", overflow: "hidden" }}
-                  dangerouslySetInnerHTML={{ __html: draftToHtml(JSON.parse(marathon.description)) }} >
+                // dangerouslySetInnerHTML={{ __html: draftToHtml(JSON.parse(flow.description)) }} 
+                >
                 </div>
               </Card>
             </Col>
@@ -96,17 +92,17 @@ function List(props) {
         }
       </Row>
       <Drawer
-        title="Добавление марафона"
+        title="Добавление нового потока"
         placement="right"
         closable={true}
         width={520}
-        onClose={onCloseAddMarathon}
+        onClose={onCloseAddFlow}
         visible={state.visible}
       >
-        <AddMarathonForm />
+        <AddFlowForm />
       </Drawer>
-    </Admin>
+    </React.Fragment>
   );
 }
 
-export default List;
+export default FlowList;

@@ -2,16 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import draftToHtml from 'draftjs-to-html';
 import { Link } from "react-router-dom";
-import moment from 'moment';
 
-// import { stateToHTML } from 'draft-js-export-html';
+import { showDetailedMarathon, activateMarathon, fillDetailedMarathon } from "../../actions/marathonAction";
 
-import { showDetailedMarathon, activateMarathon } from "../../actions/marathonAction";
 import { Tag, Drawer, Alert, Layout, Typography, Breadcrumb, Row, Col, Button, Tabs, Descriptions, Badge } from 'antd';
-
 import AddMarathonForm from "./AddMarathonForm"
 import Admin from '../admin/Admin';
-import List from '../trainings/List';
+import FlowList from "../flows/FlowList"
 // import Page404 from '../page/Page404';
 const { Content } = Layout;
 const { TabPane } = Tabs;
@@ -21,6 +18,7 @@ function View(props) {
   const dispatch = useDispatch();
   const { handle } = props.match.params;
   const marathon = useSelector(state => state.marathon.detailed_marathon);
+  // const loading = useSelector(state => state.marathon.loading);
 
   const [state, setState] = useState({
     visible: false,
@@ -28,6 +26,9 @@ function View(props) {
 
   useEffect(() => {
     dispatch(showDetailedMarathon(handle));
+    return () => {
+      dispatch(fillDetailedMarathon({}))
+    };
   }, [handle, dispatch]);
 
   const showEditMarathon = () => {
@@ -65,7 +66,6 @@ function View(props) {
   badgeStatus = marathon.status;
 
   let content =
-    // marathon ?
     <Admin history={props.history} page="list">
       <Breadcrumb style={{ margin: "20px 0" }}>
         <Breadcrumb.Item>Главная</Breadcrumb.Item>
@@ -77,23 +77,22 @@ function View(props) {
           <Content style={{ background: '#fff', padding: 24 }}>
             {marathon.description ?
               <React.Fragment>
-                <Title level={2}>{marathon.name}</Title>
+                <Title level={2}>{marathon ? marathon.name : ""}</Title>
                 <Descriptions layout="vertical" bordered>
-                  <Descriptions.Item label="Описание марафона" span={3}>
-                    <div
-                      dangerouslySetInnerHTML={{ __html: draftToHtml(JSON.parse(marathon.description)) }} >
-                    </div>
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Длительность" >{marathon.duration}</Descriptions.Item>
-                  <Descriptions.Item label="Дата старта">{moment(marathon.start_date).format('DD.MM.YYYY')}</Descriptions.Item>
-                  <Descriptions.Item label="Время старта">{moment(marathon.start_time).format('HH:mm:ss')}</Descriptions.Item>
+                  {marathon.description ?
+                    (<Descriptions.Item label="Описание марафона" span={3}>
+                      <div
+                        dangerouslySetInnerHTML={{ __html: draftToHtml(JSON.parse(marathon.description)) }} >
+                      </div>
+                    </Descriptions.Item>)
+                    : "Информация еще не заполнена"
+                  }
                   <Descriptions.Item label="Категория">{marathon.category}</Descriptions.Item>
                   <Descriptions.Item label="Цели">
                     {marathon.goals ? marathon.goals.map((goal, index) => {
                       return (<Tag color="geekblue" key={index}>{goal}</Tag>)
                     }) : ""}
                   </Descriptions.Item>
-                  <Descriptions.Item label="Цена">{marathon.price} руб.</Descriptions.Item>
                   <Descriptions.Item label="Статус">
                     <Badge status={badgeStatus} text={badgeText} />
                   </Descriptions.Item>
@@ -105,23 +104,13 @@ function View(props) {
             </div>
             <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
               <Col span={12}><Button style={{ width: "100%" }} onClick={() => showEditMarathon()} >Редактировать описание марафона</Button></Col>
-
-              {/* <Col span={12}><Button style={{ width: "100%" }} type="dashed">Перевести марафон в черновики</Button></Col> */}
               <Col span={12}><Button style={{ width: "100%" }} onClick={() => onActivateMarathon(marathon.status)} type="primary">{marathon.status === "default" ? "Активировать марафон" : "Перевести в черновики"}</Button></Col>
-              {/* <Col span={12}><Button style={{ width: "100%" }} type="danger">Деактивировать марафон</Button></Col> */}
             </Row>
           </Content>
         </TabPane>
-        <TabPane tab="Анкета марафона" key="2">
+        <TabPane tab="Потоки" key="2">
           <Content style={{ background: '#fff', padding: 24 }}>
-            <div style={{ marginBottom: "20px" }}>Анкета еще не добавлена</div>
-            <Button type="primary">Добавить анкету</Button>
-          </Content>
-        </TabPane>
-        <TabPane tab="Тренировки марафона" key="3">
-          <Content style={{ background: '#fff', padding: 24 }}>
-            {/* <div style={{ marginBottom: "20px" }}>Тренировки еще не добавлены</div> */}
-            <List />
+            <FlowList />
           </Content>
         </TabPane>
       </Tabs>
@@ -136,7 +125,6 @@ function View(props) {
         <AddMarathonForm marathon={marathon} />
       </Drawer>
     </Admin >
-  // : <Page404 />
 
   return (content);
 }

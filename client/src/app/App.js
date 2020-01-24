@@ -18,6 +18,7 @@ import TrainingsAdd from "../components/trainings/AddTrainingForm";
 import TrainingsList from "../components/trainings/List";
 import MarathonView from "../components/marathons/View"
 import TrainingView from "../components/trainings/View"
+import FlowView from "../components/flows/View"
 import Page404 from "../components/page/Page404"
 
 import { PrivateRoute } from "../components/routing/PrivateRoute";
@@ -56,9 +57,11 @@ function App() {
         <PrivateRoute path={"/admin/marathons/add"} component={MarathonsAdd} />
         <PrivateRoute path={"/admin/marathon/:handle"} component={MarathonView} />
         <PrivateRoute path={"/admin/marathon/news"} component={MarathonNews} />
-        <PrivateRoute path={"/admin/training/:handle"} component={TrainingView} />
+        <PrivateRoute exact path={"/admin/:marathon_handle/:handle"} component={FlowView} />
         <PrivateRoute path={"/admin/trainings/list"} component={TrainingsList} />
         <PrivateRoute path={"/admin/trainings/add"} component={TrainingsAdd} />
+        <PrivateRoute path={"/admin/:marathon_handle/:flow_handle/:handle"} component={TrainingView} />
+
         <Route exact path="*" component={Page404} />
       </Switch>
     </Router>

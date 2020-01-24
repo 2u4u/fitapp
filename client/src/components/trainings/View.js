@@ -1,59 +1,83 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import draftToHtml from 'draftjs-to-html';
+import { Link } from "react-router-dom";
+import { showDetailedTraining, activateTraining, fillDetailedTraining } from "../../actions/trainingAction";
+import { showDetailedFlow, fillDetailedFlow } from "../../actions/flowAction";
+import { showDetailedMarathon, fillDetailedMarathon } from "../../actions/marathonAction";
 
-import { showDetailedTraining } from "../../actions/trainingAction";
-
-import { PageHeader, Tag, Card, Alert, Layout, Descriptions, Badge, Col, Row, Button } from 'antd';
-
+import { Breadcrumb, Drawer, Tag, Card, Alert, Layout, Descriptions, Badge, Col, Row, Button } from 'antd';
 import Admin from '../admin/Admin';
-// import Page404 from '../page/Page404';
-
+import AddTrainingForm from "./AddTrainingForm";
 const { Content } = Layout;
 
 function View(props) {
   const dispatch = useDispatch();
-  const { handle } = props.match.params;
+  const { handle, marathon_handle, flow_handle } = props.match.params;
   const training = useSelector(state => state.training.detailed_training);
+  const { name: marathonName, handle: marathonHandle } = useSelector(state => state.marathon.detailed_marathon);
+  const { name: flowName, handle: flowHandle } = useSelector(state => state.flow.detailed_flow);
 
-  const routes = [{
-    path: 'first',
-    breadcrumbName: 'Список марафонов',
-  },];
+  const [state, setState] = useState({
+    visible: false,
+  });
 
   useEffect(() => {
-    if (handle) dispatch(showDetailedTraining(handle));
-  }, [handle, dispatch]);
+    // if (handle) dispatch(showDetailedTraining(handle));
+    dispatch(showDetailedTraining(handle));
+    dispatch(showDetailedFlow(flow_handle));
+    dispatch(showDetailedMarathon(marathon_handle));
+    return () => {
+      dispatch(fillDetailedTraining({}));
+      dispatch(fillDetailedFlow({}));
+      dispatch(fillDetailedMarathon({}));
+    };
+  }, [handle, flow_handle, marathon_handle, dispatch]);
+
+
+  const showEditTraining = () => {
+    setState({ visible: true })
+  }
+
+  const onCloseEditTraining = () => {
+    setState({ visible: false })
+  }
+
+  const onActivateTraining = () => {
+    const data = {};
+    data.handle = handle;
+    data.status = (training.status === "default") ? "success" : "default"
+    dispatch(activateTraining(data));
+  }
 
   let badgeStatus = "default";
   let badgeText = "Черновик";
-  let alertMessage = <Alert message='Тренировка еще не добавлена в марафон. Для добавление тренировки в марафон нажмите кнопку "Активировать тренировку". Тренировка запустится в Дату старта' type="warning" />
+  let alertMessage = <Alert message='Тренировка еще не добавлена в марафон. Для добавление тренировки в марафон нажмите кнопку "Добавить в поток". Тренировка запустится в Дату старта' type="warning" />
 
-  if (training) {
-    console.log("marathon.status", training.status)
-    switch (training.status) {
-      case 'Success':
-        badgeText = "Активный"
-        alertMessage = <Alert message='Тренировка активированна. Тренировка запустится в Дату старта' type="success" />
-        break
-      case 'Processing':
-        badgeText = "Идет"
-        alertMessage = ""
-        break
-      default:
-        badgeText = "Черновик"
-        alertMessage = <Alert message='Тренировка еще не добавлена в марафон. Для добавление тренировки в марафон нажмите кнопку "Активировать тренировку". Тренировка запустится в Дату старта". Марафон запустится в Дату старта' type="warning" />
-    }
+  switch (training.status) {
+    case 'success':
+      badgeText = "Активный"
+      alertMessage = <Alert message='Тренировка активирована. Тренировка запустится в Дату старта' type="success" />
+      break
+    case 'processing':
+      badgeText = "Идет"
+      alertMessage = ""
+      break
+    default:
+      badgeText = "Черновик"
+      alertMessage = <Alert message='Тренировка еще не добавлена в марафон. Для добавление тренировки в марафон нажмите кнопку "Добавить в поток". Тренировка запустится в Дату старта". Марафон запустится в Дату старта' type="warning" />
   }
-
-  console.log("training", training)
+  badgeStatus = training.status;
 
   let content =
     <Admin history={props.history} page="list">
-      <PageHeader
-        breadcrumb={{ routes }}
-        title="Информация по тренировке"
-      />
+      <Breadcrumb style={{ margin: "20px 0" }}>
+        <Breadcrumb.Item>Главная</Breadcrumb.Item>
+        <Breadcrumb.Item><Link to="/admin/marathons/list">Мои марафоны</Link></Breadcrumb.Item>
+        <Breadcrumb.Item><Link to={`/admin/marathon/${marathonHandle}`}>{marathonName}</Link></Breadcrumb.Item>
+        <Breadcrumb.Item><Link to={`/admin/${marathonHandle}/${flowHandle}`}>{flowName}</Link></Breadcrumb.Item>
+        {training.name ? <Breadcrumb.Item>{training.name}</Breadcrumb.Item> : ""}
+      </Breadcrumb>
       <Content style={{ background: '#fff', padding: 24 }}>
         {training.description ?
           (<Descriptions title={training.name} layout="vertical" bordered>
@@ -66,6 +90,7 @@ function View(props) {
               {training.tasks.map((task, taskId) => {
                 return (
                   <Card
+                    key={taskId}
                     size="small"
                     title={"Задание " + (taskId + 1)}
                     style={{ width: "100%", marginBottom: "20px" }}
@@ -94,12 +119,20 @@ function View(props) {
           {alertMessage}
         </div>
         <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
-          <Col span={12}><Button style={{ width: "100%" }}>Редактировать тренировку</Button></Col>
-          {/* <Col span={12}><Button style={{ width: "100%" }} type="dashed">Перевести марафон в черновики</Button></Col> */}
-          <Col span={12}><Button style={{ width: "100%" }} type="primary">Добавить в марафон</Button></Col>
-          {/* <Col span={12}><Button style={{ width: "100%" }} type="danger">Деактивировать марафон</Button></Col> */}
+          <Col span={12}><Button style={{ width: "100%" }} onClick={() => showEditTraining(training.status)}>Редактировать тренировку</Button></Col>
+          <Col span={12}><Button style={{ width: "100%" }} onClick={() => onActivateTraining(training.status)} type="primary">{training.status === "default" ? "Добавить в поток" : "Перевести в черновики"}</Button></Col>
         </Row>
       </Content>
+      <Drawer
+        title="Редактирование тренировки"
+        placement="right"
+        closable={true}
+        width={520}
+        onClose={onCloseEditTraining}
+        visible={state.visible}
+      >
+        <AddTrainingForm training={training} />
+      </Drawer>
     </Admin>
   // ) : <Page404 />)
 

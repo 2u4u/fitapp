@@ -9,6 +9,9 @@ import { showMarathonTrainings } from "../../actions/trainingAction";
 function List(props) {
   const dispatch = useDispatch();
   const marathonId = useSelector(state => state.marathon.detailed_marathon._id);
+  const marathonHandle = useSelector(state => state.marathon.detailed_marathon.handle);
+  const flowId = useSelector(state => state.flow.detailed_flow._id);
+  const flowHandle = useSelector(state => state.flow.detailed_flow.handle);
   const trainings = useSelector(state => state.training.trainings);
 
   const [state, setState] = useState({
@@ -24,8 +27,8 @@ function List(props) {
   }
 
   useEffect(() => {
-    if (marathonId) dispatch(showMarathonTrainings(marathonId));
-  }, [marathonId, dispatch]);
+    if (marathonId) dispatch(showMarathonTrainings(marathonId, flowId));
+  }, [marathonId, flowId, dispatch]);
 
   return (
     <React.Fragment>
@@ -62,7 +65,7 @@ function List(props) {
                 style={{ height: "260px" }}
                 hoverable={false}
                 actions={[
-                  <Link to={`/admin/training/${training.handle}`}><Icon type="eye" key="view" /></Link>,
+                  <Link to={`/admin/${marathonHandle}/${flowHandle}/${training.handle}`}><Icon type="eye" key="view" /></Link>,
                 ]}
               >
                 <div style={{ height: "105px", overflow: "hidden" }}

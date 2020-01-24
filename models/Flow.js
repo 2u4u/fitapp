@@ -1,40 +1,49 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const MarathonSchema = new Schema({
+const FlowSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: "users"
   },
+  marathon: {
+    type: Schema.Types.ObjectId,
+    ref: "marathon"
+  },
+  marathon_name: {
+    type: String,
+  },
   handle: {
     type: String,
-    required: true
+    // required: true
   },
   name: {
     type: String,
-    required: true
+    // required: true
   },
-  description: {
+  duration: {
     type: String,
-    required: true
+    // required: true
   },
-  programm: {
+  start_date: {
+    type: Date,
+    // required: true
+  },
+  start_time: {
+    type: Date,
+    // required: true
+  },
+  price: {
+    type: String
+  },
+  free: {
+    type: Boolean,
+    required: true,
+  },
+  questionary: {
     type: String,
+    // required: true
   },
-  category: {
-    type: String,
-    required: true
-  },
-  goals: {
-    type: Array
-  },
-  flows: [
-    {
-      flow_id: {
-        type: String
-      }
-    }
-  ],
   trainings: [
     {
       training_id: {
@@ -42,16 +51,16 @@ const MarathonSchema = new Schema({
       }
     }
   ],
-  students: [
+  references: [
     {
-      student_id: {
+      reference_id: {
         type: String
       }
     }
   ],
-  references: [
+  students: [
     {
-      reference_id: {
+      student_id: {
         type: String
       }
     }
@@ -72,4 +81,4 @@ const MarathonSchema = new Schema({
   }
 });
 
-module.exports = Marathon = mongoose.model("marathon", MarathonSchema);
+module.exports = Flow = mongoose.model("flow", FlowSchema);

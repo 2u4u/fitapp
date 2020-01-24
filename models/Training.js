@@ -10,6 +10,10 @@ const TrainingSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "marathon"
   },
+  flow: {
+    type: Schema.Types.ObjectId,
+    ref: "flow"
+  },
   name: {
     type: String,
     required: true

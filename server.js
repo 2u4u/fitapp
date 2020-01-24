@@ -21,6 +21,7 @@ const users = require("./routes/api/users");
 const posts = require("./routes/api/posts");
 const marathons = require("./routes/api/marathons");
 const trainings = require("./routes/api/trainings");
+const flows = require("./routes/api/flows");
 
 //connect to MongoDB
 mongoose
@@ -48,6 +49,7 @@ app.use("/api/users", users);
 app.use("/api/posts", posts);
 app.use("/api/marathons", marathons);
 app.use("/api/trainings", trainings);
+app.use("/api/flows", flows);
 
 //to use https with ssl
 const httpsOptions = {

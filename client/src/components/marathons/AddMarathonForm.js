@@ -3,18 +3,13 @@ import { EditorState, convertToRaw, convertFromRaw } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import { useDispatch, useSelector } from "react-redux";
 import '../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import moment from 'moment';
-
-// import { stateToHTML } from 'draft-js-export-html';
 
 import { addMarathon } from "../../actions/marathonAction";
-import { Button, Row, Col, Form, Alert, TimePicker, Input, Select, Checkbox, DatePicker } from 'antd';
-
+import { Button, Form, Alert, Input, Select } from 'antd';
 const { Option } = Select;
 
 function AddMarathonForm(props) {
   const dispatch = useDispatch();
-  // const name = useSelector(state => state.auth.user.name);
   const userId = useSelector(state => state.auth.user.id);
   let error = {};
   error = useSelector(state => state.error);
@@ -29,14 +24,9 @@ function AddMarathonForm(props) {
   const [state, setState] = useState({
     marathonId: marathon ? marathon._id : "",
     marathonName: marathon ? marathon.name : "",
-    marathonNameCheckbox: marathon ? marathon.free : false,
     marathonDescription: marathon ? marathon.description : "",
-    marathonDuration: marathon ? marathon.duration : "",
     marathonGoals: marathon ? marathon.goals : ['a10', 'c12'],
-    marathonCategory: marathon ? marathon.category : "",
-    marathonStartDate: marathon ? moment(marathon.start_date, 'YYYY/MM/DD') : undefined,
-    marathonStartTime: marathon ? moment(marathon.start_time, 'HH:mm:ss') : undefined,// moment('09:00:00', 'HH:mm:ss'),
-    marathonPrice: marathon ? marathon.price : "",
+    marathonCategory: marathon ? marathon.category : ""
   });
 
   const editorContent = marathon ? EditorState.createWithContent(convertFromRaw(JSON.parse(marathon.description))) : EditorState.createEmpty();
@@ -65,40 +55,15 @@ function AddMarathonForm(props) {
     setState(state => ({ ...state, "marathonGoals": value }));
   }
 
-  const handleDateChange = (date, dateString) => {
-    delete error["marathonStartDate"];
-    setState(state => ({ ...state, "marathonStartDate": date }));
-  }
-
-  const handleTimeChange = (time, timeString) => {
-    delete error["marathonStartTime"];
-    setState(state => ({ ...state, "marathonStartTime": time }));
-  }
-
-  const handleCheckboxChange = (e) => {
-    setState(state => ({ ...state, "marathonPrice": "" }))
-    setState(state => ({ ...state, "marathonNameCheckbox": e.target.checked }))
-  }
-
-  const disabledDate = (current) => {
-    // Can not select days before today and today
-    return current.valueOf() < Date.now();
-  }
-
   const onSubmit = (e) => {
     e.preventDefault();
     const newMarathon = {
       id: state.marathonId, //when edit
       user: userId,
       name: state.marathonName,
-      description: JSON.stringify(convertToRaw(editorState.getCurrentContent())),
-      duration: state.marathonDuration,
+      description: JSON.stringify(convertToRaw(editorState.editorState.getCurrentContent())),
       category: state.marathonCategory,
       goals: state.marathonGoals,
-      start_date: state.marathonStartDate,
-      price: state.marathonPrice,
-      start_time: state.marathonStartTime,
-      free: state.marathonNameCheckbox
     };
     dispatch(addMarathon(newMarathon, handle));
   }
@@ -132,22 +97,6 @@ function AddMarathonForm(props) {
         />
       </Form.Item>
       <Form.Item
-        label="Длительность марафона"
-        validateStatus={error.marathonDuration ? "error" : ""}
-        help={error.marathonDuration ? error.marathonDuration : ""}
-        required={true}
-      >
-        <Input
-          type="text"
-          placeholder="Введите количество дней"
-          name="marathonDuration"
-          value={state.marathonDuration}
-          onChange={(e) => handleInputChange(e)}
-          style={{ width: '200px' }}
-          addonAfter="дней"
-        />
-      </Form.Item>
-      <Form.Item
         label="Категория марафона"
         validateStatus={error.marathonCategory ? "error" : ""}
         help={error.marathonCategory ? error.marathonCategory : ""}
@@ -172,72 +121,12 @@ function AddMarathonForm(props) {
           mode="multiple"
           name="marathonGoals"
           style={{ width: '100%' }}
-          placeholder="Please select"
-          // defaultValue={['a10', 'c12']}
+          placeholder="Выберите цель марафона"
           value={state.marathonGoals}
           onChange={handleSelectChange}
         >
           {children}
         </Select>
-      </Form.Item>
-      <Form.Item
-        label="Дата старта марафона"
-        validateStatus={error.marathonStartDate ? "error" : ""}
-        help={error.marathonStartDate ? error.marathonStartDate : ""}
-        required={true}
-      >
-        <DatePicker
-          name="marathonStartDate"
-          defaultValue={state.marathonStartDate}
-          defaultPickerValue={state.marathonStartDate}
-          onChange={handleDateChange}
-          placeholder="Дата старта"
-          disabledDate={disabledDate}
-        // showTime
-        // placeholder="Выбрать время старта"
-        // onOk={onOk}
-        />
-      </Form.Item>
-      <Form.Item
-        label="Время старта марафона (МСК)"
-        validateStatus={error.marathonStartTime ? "error" : ""}
-        help={error.marathonStartTime ? error.marathonStartTime : ""}
-      >
-        <TimePicker
-          name="marathonStartTime"
-          onChange={handleTimeChange}
-          allowClear={false}
-          defaultOpenValue={state.marathonStartTime}
-          defaultValue={state.marathonStartTime}
-          placeholder="Время старта"
-          style={{ width: "171px" }}
-        />
-      </Form.Item>
-      <Form.Item
-        label="Стоимость марафона"
-        validateStatus={error.marathonPrice ? "error" : ""}
-        help={error.marathonPrice ? error.marathonPrice : ""}
-        required={true}
-      >
-        <Row>
-          <Col span={12}>
-            <Input
-              type="text"
-              placeholder="Введите цену"
-              name="marathonPrice"
-              value={state.marathonPrice}
-              onChange={(e) => handleInputChange(e)}
-              style={{ width: '200px' }}
-              addonAfter="рублей"
-              disabled={state.marathonNameCheckbox}
-            />
-          </Col>
-          <Col span={12}>
-            <Checkbox onChange={(e) => handleCheckboxChange(e)}>
-              Бесплатный
-              </Checkbox>
-          </Col>
-        </Row>
       </Form.Item>
       {Object.entries(error).length === 0 && error.constructor === Object ?
         "" : <div style={{ margin: "20px 0" }}><Alert message="Проверьте форму на ошибки" type="error" /></div>
