@@ -5,11 +5,10 @@ import { Link } from "react-router-dom";
 
 import { showDetailedMarathon, activateMarathon, fillDetailedMarathon } from "../../actions/marathonAction";
 
-import { Tag, Drawer, Alert, Layout, Typography, Breadcrumb, Row, Col, Button, Tabs, Descriptions, Badge } from 'antd';
+import { Tag, Drawer, Alert, Layout, Typography, Breadcrumb, Row, Spin, Col, Button, Tabs, Descriptions, Badge } from 'antd';
 import AddMarathonForm from "./AddMarathonForm"
-import Admin from '../admin/Admin';
-import FlowList from "../flows/FlowList"
-// import Page404 from '../page/Page404';
+import List from "../flows/List"
+
 const { Content } = Layout;
 const { TabPane } = Tabs;
 const { Title } = Typography;
@@ -18,7 +17,6 @@ function View(props) {
   const dispatch = useDispatch();
   const { handle } = props.match.params;
   const marathon = useSelector(state => state.marathon.detailed_marathon);
-  // const loading = useSelector(state => state.marathon.loading);
 
   const [state, setState] = useState({
     visible: false,
@@ -66,65 +64,78 @@ function View(props) {
   badgeStatus = marathon.status;
 
   let content =
-    <Admin history={props.history} page="list">
-      <Breadcrumb style={{ margin: "20px 0" }}>
-        <Breadcrumb.Item>Главная</Breadcrumb.Item>
-        <Breadcrumb.Item><Link to="/admin/marathons/list">Мои марафоны</Link></Breadcrumb.Item>
-        {marathon.name ? <Breadcrumb.Item>{marathon.name}</Breadcrumb.Item> : ""}
-      </Breadcrumb>
-      <Tabs defaultActiveKey="1">
-        <TabPane tab="Описание марафона" key="1">
-          <Content style={{ background: '#fff', padding: 24 }}>
-            {marathon.description ?
-              <React.Fragment>
-                <Title level={2}>{marathon ? marathon.name : ""}</Title>
-                <Descriptions layout="vertical" bordered>
-                  {marathon.description ?
-                    (<Descriptions.Item label="Описание марафона" span={3}>
-                      <div
-                        dangerouslySetInnerHTML={{ __html: draftToHtml(JSON.parse(marathon.description)) }} >
-                      </div>
-                    </Descriptions.Item>)
-                    : "Информация еще не заполнена"
-                  }
-                  <Descriptions.Item label="Категория">{marathon.category}</Descriptions.Item>
-                  <Descriptions.Item label="Цели">
-                    {marathon.goals ? marathon.goals.map((goal, index) => {
-                      return (<Tag color="geekblue" key={index}>{goal}</Tag>)
-                    }) : ""}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Статус">
-                    <Badge status={badgeStatus} text={badgeText} />
-                  </Descriptions.Item>
-                </Descriptions>
-              </React.Fragment>
-              : <span>Информация еще не заполнена</span>}
-            <div style={{ marginTop: "20px" }}>
-              {alertMessage}
-            </div>
-            <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
-              <Col span={12}><Button style={{ width: "100%" }} onClick={() => showEditMarathon()} >Редактировать описание марафона</Button></Col>
-              <Col span={12}><Button style={{ width: "100%" }} onClick={() => onActivateMarathon(marathon.status)} type="primary">{marathon.status === "default" ? "Активировать марафон" : "Перевести в черновики"}</Button></Col>
-            </Row>
-          </Content>
-        </TabPane>
-        <TabPane tab="Потоки" key="2">
-          <Content style={{ background: '#fff', padding: 24 }}>
-            <FlowList />
-          </Content>
-        </TabPane>
-      </Tabs>
-      <Drawer
-        title="Редактирование марафона"
-        placement="right"
-        closable={true}
-        width={520}
-        onClose={onCloseEditMarathon}
-        visible={state.visible}
-      >
-        <AddMarathonForm marathon={marathon} />
-      </Drawer>
-    </Admin >
+    <React.Fragment>
+      {marathon.status ?
+        (<React.Fragment>
+          <Breadcrumb style={{ margin: "20px 0" }}>
+            <Breadcrumb.Item>Главная</Breadcrumb.Item>
+            <Breadcrumb.Item><Link to="/admin/marathons/list">Мои марафоны</Link></Breadcrumb.Item>
+            {marathon.name ? <Breadcrumb.Item>{marathon.name}</Breadcrumb.Item> : ""}
+          </Breadcrumb>
+          <Tabs defaultActiveKey="1">
+            <TabPane tab="Описание марафона" key="1">
+              <Content style={{ background: '#fff', padding: 24 }}>
+                {marathon.description ?
+                  <React.Fragment>
+                    <Title level={2}>{marathon ? marathon.name : ""}</Title>
+                    <Descriptions layout="vertical" bordered>
+                      {marathon.description ?
+                        (<Descriptions.Item label="Описание марафона" span={3}>
+                          <div
+                            dangerouslySetInnerHTML={{ __html: draftToHtml(JSON.parse(marathon.description)) }} >
+                          </div>
+                        </Descriptions.Item>)
+                        : "Информация еще не заполнена"
+                      }
+                      <Descriptions.Item label="Категория">{marathon.category}</Descriptions.Item>
+                      <Descriptions.Item label="Цели">
+                        {marathon.goals ? marathon.goals.map((goal, index) => {
+                          return (<Tag color="geekblue" key={index}>{goal}</Tag>)
+                        }) : ""}
+                      </Descriptions.Item>
+                      <Descriptions.Item label="Статус">
+                        <Badge status={badgeStatus} text={badgeText} />
+                      </Descriptions.Item>
+                    </Descriptions>
+                  </React.Fragment>
+                  : <span>Информация еще не заполнена</span>}
+                <div style={{ marginTop: "20px" }}>
+                  {alertMessage}
+                </div>
+                <Row gutter={[16, 16]} style={{ marginTop: "20px" }}>
+                  <Col span={12}><Button style={{ width: "100%" }} onClick={() => showEditMarathon()} >Редактировать описание марафона</Button></Col>
+                  <Col span={12}><Button style={{ width: "100%" }} onClick={() => onActivateMarathon(marathon.status)} type="primary">{marathon.status === "default" ? "Активировать марафон" : "Перевести в черновики"}</Button></Col>
+                </Row>
+              </Content>
+            </TabPane>
+            <TabPane tab="Потоки" key="2">
+              <Content style={{ background: '#fff', padding: 24 }}>
+                <List />
+              </Content>
+            </TabPane>
+          </Tabs>
+          <Drawer
+            title="Редактирование марафона"
+            placement="right"
+            closable={true}
+            width={520}
+            onClose={onCloseEditMarathon}
+            visible={state.visible}
+          >
+            <AddMarathonForm marathon={marathon} />
+          </Drawer>
+        </React.Fragment>)
+        :
+        <Content style={{
+          background: '#fff',
+          padding: 24,
+          display: "flex",
+          justifyContent: "center",
+          margin: "20px 0"
+        }}>
+          <Spin size="large" />
+        </Content>}
+    </React.Fragment >
 
   return (content);
 }

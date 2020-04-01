@@ -62,11 +62,26 @@ div.public-DraftEditor-content {
     border-color: #f5222d;
   }
 }
-// .anticon-change {
-//   font-size: 18px;
-//   padding: 5px;
-//   color: #808080;
-//   border: 1px solid #d9d9d9;
-//   border-radius: 2px;
-//   margin: 0 10px 0 0;
-// }
+
+.ant-card {
+  &.ant-card--active {
+    background: #f6ffed;
+    .ant-card-actions {
+      background: #f6ffed;
+      border-top: 1px solid #b7eb8f;
+    }
+    .ant-card-head {
+      border-bottom: 1px solid #b7eb8f;
+    }
+  }
+  &.ant-card--draft {
+    background-color: #fffbe6;
+    .ant-card-actions {
+      background-color: #fffbe6;
+      border-top: 1px solid #ffe58f;
+    }
+    .ant-card-head {
+      border-bottom: 1px solid #ffe58f;
+    }
+  }
+}

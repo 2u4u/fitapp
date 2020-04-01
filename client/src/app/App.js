@@ -7,21 +7,18 @@ import setAuthToken from "../utils/setAuthToken";
 import { setCurrentUser, logoutUser } from "../actions/authAction";
 import store from "../store";
 
-import Admin from "../components/admin/Admin"
 import Login from "../components/auth/Login"
 import Register from "../components/auth/Register"
 import Account from "../components/admin/Account"
-import MarathonsAdd from "../components/marathons/Add";
 import MarathonsList from "../components/marathons/List";
-import MarathonNews from "../components/marathons/News";
-import TrainingsAdd from "../components/trainings/AddTrainingForm";
-import TrainingsList from "../components/trainings/List";
 import MarathonView from "../components/marathons/View"
 import TrainingView from "../components/trainings/View"
 import FlowView from "../components/flows/View"
 import Page404 from "../components/page/Page404"
 
 import { PrivateRoute } from "../components/routing/PrivateRoute";
+import ChatRoom from '../components/chat/ChatRoom';
+import Admin from '../components/admin/Admin';
 
 // Check for token
 if (localStorage.jwtToken) {
@@ -42,26 +39,25 @@ if (localStorage.jwtToken) {
   }
 }
 function App() {
+  // console.log("location", location)
+
   return (
     <Router>
       <Switch>
-        {/* <Route exact path="/" component={Admin} /> */}
-        <PrivateRoute exact path="/" component={Admin} />
         <Route exact path="/login" component={Login} />
         <Route exact path="/register" component={Register} />
-        {/* <Route exact path="/user" component={User} /> */}
-        <PrivateRoute exact path="/" component={Account} />
-        <PrivateRoute exact path="/admin" component={Account} />
-        <PrivateRoute exact path="/admin/account" component={Account} />
-        <PrivateRoute path={"/admin/marathons/list"} component={MarathonsList} />
-        <PrivateRoute path={"/admin/marathons/add"} component={MarathonsAdd} />
-        <PrivateRoute path={"/admin/marathon/:handle"} component={MarathonView} />
-        <PrivateRoute path={"/admin/marathon/news"} component={MarathonNews} />
-        <PrivateRoute exact path={"/admin/:marathon_handle/:handle"} component={FlowView} />
-        <PrivateRoute path={"/admin/trainings/list"} component={TrainingsList} />
-        <PrivateRoute path={"/admin/trainings/add"} component={TrainingsAdd} />
-        <PrivateRoute path={"/admin/:marathon_handle/:flow_handle/:handle"} component={TrainingView} />
-
+        <PrivateRoute exact path="/" component={Admin} />
+        <Admin>
+          {/* <PrivateRoute path="/admin" component={} /> */}
+          <PrivateRoute path="/admin/account" component={Account} />
+          {/* <PrivateRoute path="/admin/chat" component={ChatRoom} /> */}
+          <PrivateRoute path="/admin/chat/:chatId" component={ChatRoom} />
+          <PrivateRoute exact path="/admin/chat" component={ChatRoom} />
+          <PrivateRoute path="/admin/marathons/list" component={MarathonsList} />
+          <PrivateRoute exact path="/admin/marathon/:handle" component={MarathonView} />
+          <PrivateRoute exact path="/admin/marathon/:marathon_handle/:handle" component={FlowView} />
+          <PrivateRoute exact path="/admin/marathon/:marathon_handle/:flow_handle/:handle" component={TrainingView} />
+        </Admin>
         <Route exact path="*" component={Page404} />
       </Switch>
     </Router>

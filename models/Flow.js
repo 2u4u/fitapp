@@ -40,10 +40,19 @@ const FlowSchema = new Schema({
     type: Boolean,
     required: true,
   },
-  questionary: {
-    type: String,
-    // required: true
-  },
+  questionary: [
+    {
+      question: {
+        type: String
+      },
+      type: {
+        type: String
+      },
+      options: {
+        type: Array
+      }
+    }
+  ],
   trainings: [
     {
       training_id: {

@@ -7,7 +7,14 @@ export const NOTIFICATION = "NOTIFICATION";
 
 //users
 export const SET_CURRENT_USER = "SET_CURRENT_USER";
+export const GET_USERS = "GET_USERS";
 // export const SHOW_USERS = "SHOW_USERS";
+
+//chats 
+export const START_CHAT = "START_CHAT";
+export const GET_CHAT_MESSAGES = "GET_CHAT_MESSAGES";
+export const GET_CHAT_MEMBERS = "GET_CHAT_MEMBERS";
+export const GET_USER_CHATS = "GET_USER_CHATS";
 
 //marathons
 export const SHOW_ALL_USER_MARATHONS = "SHOW_ALL_USER_MARATHONS";

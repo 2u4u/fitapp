@@ -1,18 +1,10 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-const https = require('https');
-const http = require('http');
-const fs = require('fs');
 const passport = require("passport");
 const expressSession = require('express-session');
 
-const app = express();
+// const app = express();
 const port = process.env.PORT || 5000;
-
-//body parser middleware, this will let us get the data from a POST
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
 
 //db config
 const db = require("./config/keys").mongoURI;
@@ -22,6 +14,7 @@ const posts = require("./routes/api/posts");
 const marathons = require("./routes/api/marathons");
 const trainings = require("./routes/api/trainings");
 const flows = require("./routes/api/flows");
+const chats = require("./routes/api/chats");
 
 //connect to MongoDB
 mongoose
@@ -34,6 +27,11 @@ require("./config/jwt")(passport);
 require("./config/facebook")(passport);
 require("./config/google")(passport);
 
+// server and io in middleware/socket.js
+const server = require('./middleware/socket').server;
+const io = require('./middleware/socket').io;
+const app = require('./middleware/socket').app;
+
 app.use(expressSession({
   secret: require("./config/keys").session.secret,
   name: require("./config/keys").session.name,
@@ -41,6 +39,7 @@ app.use(expressSession({
   saveUninitialized: true,
 }));
 
+//passport init
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -50,26 +49,17 @@ app.use("/api/posts", posts);
 app.use("/api/marathons", marathons);
 app.use("/api/trainings", trainings);
 app.use("/api/flows", flows);
-
-//to use https with ssl
-const httpsOptions = {
-  key: fs.readFileSync('./security/cert.key'),
-  cert: fs.readFileSync('./security/cert.pem')
-}
+app.use("/api/chats", chats);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
 
   app.get("*", (req, res) => {
+    console.log("we are here 2", __dirname);
     res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
   });
-  http.createServer(app)
-    .listen(port, () => {
-      console.log('production server running at ' + port)
-    })
-} else {
-  https.createServer(httpsOptions, app)
-    .listen(port, () => {
-      console.log('secured server running at ' + port)
-    })
 }
+
+server.listen(port, () => {
+  console.log('server running at ' + port)
+})

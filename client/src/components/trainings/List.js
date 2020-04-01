@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Drawer, Row, Col, Icon, Card } from 'antd';
+import { Drawer, Row, Col, Icon, Card, Tooltip, Popconfirm } from 'antd';
 import draftToHtml from 'draftjs-to-html';
 import AddTrainingForm from "./AddTrainingForm"
-import { showMarathonTrainings } from "../../actions/trainingAction";
+import { showMarathonTrainings, deleteTraining } from "../../actions/trainingAction";
 
 function List(props) {
   const dispatch = useDispatch();
@@ -24,6 +24,10 @@ function List(props) {
 
   const onCloseAddTraining = () => {
     setState({ visible: false })
+  }
+
+  const onDeleteTraining = (trainingId, flowId, marathonId) => {
+    dispatch(deleteTraining(trainingId, flowId, marathonId));
   }
 
   useEffect(() => {
@@ -65,7 +69,20 @@ function List(props) {
                 style={{ height: "260px" }}
                 hoverable={false}
                 actions={[
-                  <Link to={`/admin/${marathonHandle}/${flowHandle}/${training.handle}`}><Icon type="eye" key="view" /></Link>,
+                  <Tooltip title="Посмотреть подробную информацию по тренировке">
+                    <Link to={`/admin/marathon/${marathonHandle}/${flowHandle}/${training.handle}`}><Icon type="eye" key="view" /></Link>
+                  </Tooltip>,
+                  <Popconfirm
+                    title="Вы уверены, что хотите удалить поток?"
+                    onConfirm={() => onDeleteTraining(training._id, flowId, marathonId)}
+                    okText="Уверен, удаляем"
+                    cancelText="Нет, не удалять"
+                    icon={<Icon type="question-circle-o" style={{ color: 'red' }} />}
+                  >
+                    <Tooltip title="Удалить поток">
+                      <span><Icon type="delete" key="delete" /></span>
+                    </Tooltip>
+                  </Popconfirm>,
                 ]}
               >
                 <div style={{ height: "105px", overflow: "hidden" }}

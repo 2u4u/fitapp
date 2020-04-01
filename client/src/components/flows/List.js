@@ -4,8 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { Drawer, Row, Col, Icon, Card, Tooltip, Popconfirm } from 'antd';
 import AddFlowForm from "./AddFlowForm"
 import { showMarathonFlows, deleteFlow } from "../../actions/flowAction";
+// import moment from 'moment';
 
-function FlowList(props) {
+function List(props) {
   const dispatch = useDispatch();
   const marathonId = useSelector(state => state.marathon.detailed_marathon._id);
   const marathonHandle = useSelector(state => state.marathon.detailed_marathon.handle);
@@ -62,12 +63,23 @@ function FlowList(props) {
           flows.map(flow => (
             <Col span={6} key={flow._id}>
               <Card
-                title={flow.name}
+                title={
+                  <React.Fragment>
+                    {flow.status === "default" ?
+                      <Icon type="exclamation-circle" style={{ marginRight: "10px" }} />
+                      : <Icon type="check-circle" style={{ marginRight: "10px" }} />
+                    }
+                    <Tooltip title={flow.name}>
+                      {flow.name}
+                    </Tooltip>
+                  </React.Fragment>
+                }
                 style={{ height: "260px" }}
                 hoverable={false}
+                className={flow.status === "default" ? "ant-card--draft" : "ant-card--active"}
                 actions={[
                   <Tooltip title="Посмотреть подробную информацию о потоке">
-                    <Link to={`/admin/${marathonHandle}/${flow.handle}`}><Icon type="eye" key="view" /></Link>
+                    <Link to={`/admin/marathon/${marathonHandle}/${flow.handle}`}><Icon type="eye" key="view" /></Link>
                   </Tooltip>,
                   <Popconfirm
                     title="Вы уверены, что хотите удалить поток?"
@@ -82,9 +94,9 @@ function FlowList(props) {
                   </Popconfirm>,
                 ]}
               >
-                <div style={{ height: "105px", overflow: "hidden" }}
-                // dangerouslySetInnerHTML={{ __html: draftToHtml(JSON.parse(flow.description)) }} 
-                >
+                <div style={{ height: "105px", overflow: "hidden" }}>
+                  <p><span style={{ fontWeight: "bold" }}>Дата старта: </span>{flow.start_date}</p>
+                  <p><span style={{ fontWeight: "bold" }}>Длительность: </span>{flow.durationo}</p>
                 </div>
               </Card>
             </Col>
@@ -105,4 +117,4 @@ function FlowList(props) {
   );
 }
 
-export default FlowList;
+export default List;

@@ -108,6 +108,7 @@ router.post("/add",
 // @desk    Return all trainings in exact marathon and flow
 // @access  Public
 router.get("/all/:marathon/:flow", (req, res) => {
+  const errors = {};
   Training
     .find({ marathon: req.params.marathon, flow: req.params.flow })
     .then(trainings => res.json(trainings))
@@ -122,6 +123,7 @@ router.get("/all/:marathon/:flow", (req, res) => {
 // @desk    Return training details for :handle
 // @access  Public
 router.get("/detailed/:handle", (req, res) => {
+  const errors = {};
   Training
     .findOne({ handle: req.params.handle })
     .then(training => res.json(training))
@@ -139,6 +141,7 @@ router.post("/changestatus",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
     const { handle, status } = req.body;
+    const errors = {};
     Training
       .findOne({ handle })
       .then(training => {
@@ -154,5 +157,25 @@ router.post("/changestatus",
           });
       });
   });
+
+// @route   DELETE api/trainings/delete/:trainingId
+// @desk    Delete training
+// @access  Private
+router.delete(
+  "/delete/:trainingId",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const errors = {};
+
+    //добавить удаление тренировок тоже и удаление информации о потоке из модели марафона
+    Training.findOneAndRemove({ _id: req.params.trainingId })
+      .then(() => res.json({ success: true }))
+      .catch(err => {
+        errors.main = "Нет тренировки с таким ID. Свяжитесь с технической поддержкой";
+        console.log("Нет тренировки с таким ID. Текст ошибки: ", err)
+        return res.status(400).json(errors);
+      });
+  }
+);
 
 module.exports = router;

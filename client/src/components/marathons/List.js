@@ -4,11 +4,10 @@ import { useDispatch, useSelector } from "react-redux";
 import draftToHtml from 'draftjs-to-html';
 import { showUserMarathons, deleteMarathon } from "../../actions/marathonAction";
 
-import Admin from "../admin/Admin"
 import AddMarathonForm from "./AddMarathonForm"
 import { Drawer, Row, Col, Icon, Breadcrumb, Card, Tooltip, Popconfirm } from 'antd';
 
-function List(props) {
+function List() {
   const dispatch = useDispatch();
   const userId = useSelector(state => state.auth.user.id);
   const marathons = useSelector(state => state.marathon.marathons);
@@ -34,7 +33,7 @@ function List(props) {
   }
 
   return (
-    <Admin history={props.history} page="list">
+    <React.Fragment>
       <Breadcrumb style={{ margin: "20px 0" }}>
         <Breadcrumb.Item>Главная</Breadcrumb.Item>
         <Breadcrumb.Item>Мои марафоны</Breadcrumb.Item>
@@ -67,9 +66,20 @@ function List(props) {
           marathons.map(marathon => (
             <Col span={6} key={marathon._id}>
               <Card
-                title={marathon.name}
+                title={
+                  <React.Fragment>
+                    {marathon.status === "default" ?
+                      <Icon type="exclamation-circle" style={{ marginRight: "10px" }} />
+                      : <Icon type="check-circle" style={{ marginRight: "10px" }} />
+                    }
+                    <Tooltip title={marathon.name}>
+                      {marathon.name}
+                    </Tooltip>
+                  </React.Fragment>
+                }
                 style={{ height: "260px" }}
                 hoverable={false}
+                className={marathon.status === "default" ? "ant-card--draft" : "ant-card--active"}
                 actions={[
                   <Tooltip title="Посмотреть подробную информацию о марафоне">
                     <Link to={`/admin/marathon/${marathon.handle}`}><Icon type="eye" key="view" /></Link>
@@ -105,7 +115,7 @@ function List(props) {
       >
         <AddMarathonForm />
       </Drawer>
-    </Admin>
+    </React.Fragment>
   );
 }
 

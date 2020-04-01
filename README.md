@@ -159,3 +159,15 @@
     * Анализы (?) 
     * Расчет каллорий (?) 
     * Потребление воды (?) 
+
+
+Chat:
+
+- show unread messages
+- socket chatroom/namespace
+- load only last 20 messages
+- load on scroll
+- search users and chats
+
+- show typing
+- show left (?)

@@ -93,3 +93,26 @@ export const activateTraining = (data) => dispatch => {
       })
     })
 }
+
+
+// Delete training
+export const deleteTraining = (trainingId, flow, marathon) => dispatch => {
+  dispatch({ type: TRAINING_LOADING, payload: true })
+  axios
+    .delete(`/api/trainings/delete/${trainingId}`)
+    .then(res => {
+      dispatch(updateMarathonTrainings(marathon, flow));
+      dispatch({ type: NOTIFICATION, payload: { active: true, type: "success", text: "Поток удален" } })
+      setTimeout(() =>
+        dispatch({ type: NOTIFICATION, payload: { active: false, type: "", text: "" } })
+        , 5000);
+
+    })
+    .catch(err => {
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    }
+    );
+};

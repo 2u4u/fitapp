@@ -1,24 +1,28 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useHistory } from "react-router-dom";
+
 import { logoutUser } from "../../actions/authAction";
 
 import { Menu, Layout, Icon, Row } from 'antd';
 const { Content, Sider, Header } = Layout;
 
 function Admin(props) {
+  const location = useLocation();
+  const history = useHistory();
   const name = useSelector(state => state.auth.user.name);
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
-  const { page } = props;
+  const path = location.pathname.split("/")[2];
+  const page = path === "marathons" ? "marathon" : path;
 
   const onLogOut = () => {
     dispatch(logoutUser());
   }
 
   useEffect(() => {
-    if (!isAuthenticated) props.history.push("/login")
-  }, [props.history, isAuthenticated]);
+    if (!isAuthenticated) history.push("/login")
+  }, [history, isAuthenticated]);
 
   return (
     <Layout style={{ height: '100%' }}>
@@ -31,12 +35,11 @@ function Admin(props) {
             selectedKeys={page}
           >
             <Menu.Item key="account"><Link to="/admin/account">Мой профиль</Link></Menu.Item>
-            <Menu.Item key="list"><Link to="/admin/marathons/list">Мои марафоны</Link></Menu.Item>
-            <Menu.Item key="add"><Link to="/admin/marathons/add">Добавить марафон</Link></Menu.Item>
+            <Menu.Item key="marathon"><Link to="/admin/marathons/list">Мои марафоны</Link></Menu.Item>
+            <Menu.Item key="chat"><Link to="/admin/chat">Мои сообщения</Link></Menu.Item>
           </Menu>
         </Sider>
         <Content>
-
           <Header style={{ background: '#fff', padding: 0 }}>
             <Row type="flex" justify="end" align="middle" style={{ height: "100%" }}>
               {isAuthenticated ?

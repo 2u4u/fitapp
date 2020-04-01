@@ -133,7 +133,7 @@ router.post("/changestatus",
       });
   });
 
-// @route   DELETE api/flows/delete/:postId
+// @route   DELETE api/flows/delete/:flowId
 // @desk    Delete flow
 // @access  Private
 router.delete(
@@ -152,5 +152,50 @@ router.delete(
       });
   }
 );
+
+// @route   POST api/flows/addquestion
+// @desk    Add question to flow
+// @access  Private
+router.post("/addquestion",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const errors = {};
+    // const { errors, isValid } = validateAddFlow(req.body);
+    // if (!isValid) return res.status(400).json(errors);
+
+    const { id, flow_id, questionary } = req.body;
+
+    Flow
+      .findOne({ id: flow_id })
+      .then(flow => {
+        if (flow) {
+          //if training with same handle exists, than check id
+          // if (training._id == id) {
+          //   flow.questionary = questionary;
+
+          //   flow
+          //     .save()
+          //     .then(savedFlow => res.json(savedFlow))
+          //     .catch(err => {
+          //       errors.main = "Ошибка при добавлении анкеты в поток. Свяжитесь с технической поддержкой";
+          //       console.log("Ошибка при добавлении анкеты в поток. Текст ошибки: ", err)
+          //       return res.status(400).json(errors);
+          //     });
+          // } else {
+          //   //if another flow with this handle exists for this user with another id, than
+          //   errors.name = "У вас уже есть поток с таким названием для этого марафона";
+          //   return res.status(400).json(errors);
+          // }
+        } else {
+          //if flow doesn't exist
+          errors.main = "Ошибка сохранения информации о марафоне при сохранении потока. Свяжитесь с технической поддержкой";
+          console.log("Ошибка сохранения информации о марафоне при сохранении потока. Текст ошибки:", err)
+          return res.status(400).json(errors);
+
+
+        }
+      });
+  });
+
 
 module.exports = router;

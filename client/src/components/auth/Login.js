@@ -34,8 +34,9 @@ function Login(props) {
   }
 
   useEffect(() => {
+    console.log("props.history", props, props.history)
     if (isAuthenticated) props.history.push("/admin")
-  }, [props.history, isAuthenticated]);
+  }, [props.history, isAuthenticated, props]);
 
   return (
     <Layout style={{ height: '100%' }}>
